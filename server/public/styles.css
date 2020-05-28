@@ -1,0 +1,31 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+html {
+  background-color: #f8f9fa;
+}
+.scale {
+  object-fit: contain;
+  height: 250px;
+}
+.pointer {
+  cursor: pointer;
+}
+.limit-height {
+  max-height: 50vh;
+}
+.summary-image {
+  max-width: calc(100%/3);
+}
+.product-item {
+  position: relative;
+}
+.product-item img.top {
+  position: absolute;
+  left: 0;
+  transition: opacity 1s ease-in-out;
+}
+.product-item img.top:hover {
+  opacity: 0;
+}

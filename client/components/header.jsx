@@ -4,7 +4,10 @@ class Header extends React.Component {
   render() {
     return (
       <nav className="navbar navbar-dark bg-dark text-white fixed-top">
-        <h3>Choice Chairs</h3>
+        <h3>
+          <i className="fas fa-chair"></i>
+          &nbsp; Choice Chairs
+        </h3>
         <span
           className="pointer"
           // onClick={() => {

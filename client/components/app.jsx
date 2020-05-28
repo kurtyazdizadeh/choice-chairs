@@ -1,6 +1,7 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Header from './header';
+import ProductList from './product-list';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -26,7 +27,25 @@ export default class App extends React.Component {
     //   : <h1>{this.state.message}</h1>;
     return (
       <>
-        <Header cartItemCount={this.state.cart.length} />
+        <Router>
+          <div className="bg-light">
+            <Header cartItemCount={this.state.cart.length} />
+            <div className="mt-4 py-5">
+              <div className="products">
+                <div className="row justify-content-center mx-1">
+                  <Switch>
+                    <Route path="/"
+                      render={props =>
+                        <ProductList {...props}
+                        />}
+                    />
+                  </Switch>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </Router>
       </>
     );
 
