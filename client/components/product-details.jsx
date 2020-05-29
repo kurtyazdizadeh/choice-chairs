@@ -1,4 +1,5 @@
 import React from 'react';
+import Gallery from './image-carousel';
 
 class ProductDetails extends React.Component {
   constructor(props) {
@@ -46,7 +47,8 @@ class ProductDetails extends React.Component {
             </h4>
           </div>
           <div className="row">
-            <img src={`../images/${productid}/${chosencolor}-${images[0]}.webp`} alt={name} className="col-12 col-md-6 scale limit-height" />
+            <Gallery color={chosencolor} images={images} productId={productid} />
+            {/* <img src={`../images/${productid}/${chosencolor}-${images[0]}.webp`} alt={name} className="col-12 col-md-6 scale limit-height" /> */}
             <div className="product-info d-flex flex-column col-12 col-md-6">
               <h2 className="font-weight-bold">{name}</h2>
               <h3 className="text-secondary">${(price / 100).toFixed(2)}</h3>
