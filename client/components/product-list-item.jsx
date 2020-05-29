@@ -3,14 +3,14 @@ import { withRouter } from 'react-router-dom';
 
 class ProductListItem extends React.Component {
   render() {
-    const { name, price, desc, images, color, colorOptions, productId } = this.props;
+    const { name, price, desc, images, colorOptions, productId } = this.props;
     return (
       <div
         className="card product-item m-2 col-11 col-md-5 col-lg-3"
       >
         <div className="card-image pointer"
           onClick={() => {
-            this.props.history.push(`/details/${productId}?color=${color}`);
+            this.props.history.push(`/details/${productId}?color=${colorOptions[0]}`);
           }}
         >
           <img

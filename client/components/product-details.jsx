@@ -1,4 +1,5 @@
 import React from 'react';
+import Gallery from './image-carousel';
 
 class ProductDetails extends React.Component {
   constructor(props) {
@@ -10,8 +11,19 @@ class ProductDetails extends React.Component {
 
   componentDidMount() {
     const { productId } = this.props.match.params;
+    const searchQuery = new URLSearchParams(this.props.location.search);
+    const color = searchQuery.get('color');
 
-    fetch(`/api/products/${productId}`)
+    this.getProductDetails(productId, color);
+  }
+
+  getProductDetails(productId, color) {
+    const config = {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' }
+    };
+
+    fetch(`/api/products/${productId}-${color}`, config)
       .then(res => res.json())
       .then(product => {
         this.setState({ product: product });
@@ -21,7 +33,7 @@ class ProductDetails extends React.Component {
 
   render() {
     if (this.state.product) {
-      const { productid, name, images, chosencolor, price, shortdescription, longdescription } = this.state.product;
+      const { productid, name, images, colors, chosencolor, price, shortdescription, longdescription } = this.state.product;
       return (
         <div className="card col-11 col-md-8 d-flex flex-column m-3">
           <div className="row p-3">
@@ -35,10 +47,28 @@ class ProductDetails extends React.Component {
             </h4>
           </div>
           <div className="row">
-            <img src={`../images/${productid}/${chosencolor}-${images[0]}.webp`} alt={name} className="col-12 col-md-6 scale limit-height" />
+            <Gallery color={chosencolor} images={images} productId={productid} />
+            {/* <img src={`../images/${productid}/${chosencolor}-${images[0]}.webp`} alt={name} className="col-12 col-md-6 scale limit-height" /> */}
             <div className="product-info d-flex flex-column col-12 col-md-6">
               <h2 className="font-weight-bold">{name}</h2>
               <h3 className="text-secondary">${(price / 100).toFixed(2)}</h3>
+              <h6>Colors:</h6>
+              <div>
+                {
+                  colors.map((color, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className={`${color} color ml-0 pointer`}
+                        onClick={() => {
+                          this.props.history.push(`/details/${productid}?color=${color}`);
+                          this.getProductDetails(productid, color);
+                        }}
+                      >
+                      </div>);
+                  })
+                }
+              </div>
               <p>{shortdescription}</p>
               <button
                 type="button"
