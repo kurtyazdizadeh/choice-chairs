@@ -24,14 +24,14 @@ app.get('/api/products', (req, res, next) => {
     SELECT
       "p".*,
       ARRAY_AGG(distinct "c"."name") AS "colors",
-      ARRAY_AGG(distinct "i"."imagetype") AS "images"
+      ARRAY_AGG(distinct "i"."imageType") AS "images"
     FROM products as "p"
-      JOIN products_colors USING ("productid")
-      JOIN colors as "c" USING ("colorid")
-      JOIN products_images USING ("productid")
-      JOIN images as "i" USING ("imageid")
-    GROUP BY productid
-    ORDER BY productid;
+      JOIN products_colors USING ("productId")
+      JOIN colors as "c" USING ("colorId")
+      JOIN products_images USING ("productId")
+      JOIN images as "i" USING ("imageId")
+    GROUP BY "productId"
+    ORDER BY "productId";
   `;
   db.query(sql)
     .then(result => {
@@ -51,8 +51,8 @@ app.patch('/api/products/:productId-:color', (req, res, next) => {
   }
   const sql = `
     UPDATE products
-    SET chosencolor = $1
-    WHERE productid = $2;
+    SET "chosenColor" = $1
+    WHERE "productId" = $2;
   `;
   const params = [color, productId];
   db.query(sql, params)
@@ -61,14 +61,14 @@ app.patch('/api/products/:productId-:color', (req, res, next) => {
         SELECT
           "p".*,
           ARRAY_AGG(distinct "c"."name") AS "colors",
-          ARRAY_AGG(distinct "i"."imagetype") AS "images"
+          ARRAY_AGG(distinct "i"."imageType") AS "images"
         FROM products as "p"
-          JOIN products_colors USING ("productid")
-          JOIN colors as "c" USING ("colorid")
-          JOIN products_images USING ("productid")
-          JOIN images as "i" USING ("imageid")
-        WHERE productid = $1
-        GROUP BY productid
+          JOIN products_colors USING ("productId")
+          JOIN colors as "c" USING ("colorId")
+          JOIN products_images USING ("productId")
+          JOIN images as "i" USING ("imageId")
+        WHERE "productId" = $1
+        GROUP BY "productId"
       ;`;
       const productId = [params[1]];
       db.query(select, productId)

@@ -23,9 +23,11 @@ ALTER TABLE ONLY public.products_colors DROP CONSTRAINT products_colors_colorid_
 ALTER TABLE ONLY public.products DROP CONSTRAINT products_pkey;
 ALTER TABLE ONLY public.images DROP CONSTRAINT images_pkey;
 ALTER TABLE ONLY public.colors DROP CONSTRAINT colors_pkey;
+ALTER TABLE ONLY public.carts DROP CONSTRAINT carts_pkey;
 ALTER TABLE public.products ALTER COLUMN productid DROP DEFAULT;
 ALTER TABLE public.images ALTER COLUMN imageid DROP DEFAULT;
 ALTER TABLE public.colors ALTER COLUMN colorid DROP DEFAULT;
+ALTER TABLE public.carts ALTER COLUMN "cartId" DROP DEFAULT;
 DROP SEQUENCE public.products_productid_seq;
 DROP TABLE public.products_images;
 DROP TABLE public.products_colors;
@@ -34,6 +36,8 @@ DROP SEQUENCE public.images_imageid_seq;
 DROP TABLE public.images;
 DROP SEQUENCE public.colors_colorid_seq;
 DROP TABLE public.colors;
+DROP SEQUENCE public."carts_cartId_seq";
+DROP TABLE public.carts;
 DROP EXTENSION plpgsql;
 DROP SCHEMA public;
 --
@@ -67,6 +71,36 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: carts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.carts (
+    "cartId" integer NOT NULL,
+    "createdAt" timestamp(6) with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: carts_cartId_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public."carts_cartId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: carts_cartId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public."carts_cartId_seq" OWNED BY public.carts."cartId";
+
 
 --
 -- Name: colors; Type: TABLE; Schema: public; Owner: -
@@ -183,6 +217,13 @@ ALTER SEQUENCE public.products_productid_seq OWNED BY public.products.productid;
 
 
 --
+-- Name: carts cartId; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.carts ALTER COLUMN "cartId" SET DEFAULT nextval('public."carts_cartId_seq"'::regclass);
+
+
+--
 -- Name: colors colorid; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -201,6 +242,14 @@ ALTER TABLE ONLY public.images ALTER COLUMN imageid SET DEFAULT nextval('public.
 --
 
 ALTER TABLE ONLY public.products ALTER COLUMN productid SET DEFAULT nextval('public.products_productid_seq'::regclass);
+
+
+--
+-- Data for Name: carts; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.carts ("cartId", "createdAt") FROM stdin;
+\.
 
 
 --
@@ -238,15 +287,15 @@ COPY public.images (imageid, imagetype) FROM stdin;
 --
 
 COPY public.products (productid, name, price, shortdescription, longdescription, chosencolor) FROM stdin;
-1	The Standard	199999	The defining style of comfort and practicality, a fine choice for one seeking a subtle charm.	Upholstered in Softhead Leather contrasting colored mesh for an aggressive style and cool feel. Features height adjustment, seat back recline control, flip up arms and 360 degrees of swivel.	green
-2	The Streamer	274999	Designed for optimum performance, The Streamer is prepped for gaming marathons that will maximize your K/D ratio.	We see you, gamer, we know your needs are different than the average person. This chair is built with you in mind, comfort features includes a high back, flip up armrests, support pillows for lumbar and neck support, and a premium leather upholstry. Sit back and game in style!	blue
-3	The Tuxedo	249999	Flashy, bold, revolutionary. Unlinke your actual suit, this chair will make a statement and give you room to breathe at the same time.	This chair will put you above the rest and give you maximum comfort and productivity. Features a reclining back mechanism, tilt & tension mechanism control, ajustable headrest and lumbar support cushions, swivel armrests.	white
-4	The Plush	199999	Premium and luxurious, The Plush will make all your friends jealous.	The Plush is an eye catching spectacle of a chair. The ulimate gaming chair is made with a synthetic flex upholstry and features a height adjustable memory foam seat, reclining back mechanism up to 150 degrees, and ergonomic adjustable headrest and lumbar support pillows.	orange
-5	The Racer	299999	Leave your rivals in the dust with The Racer. Premium leather, flair and a two-tone finish that belongs on track.	Stain-resistant 2.0 PU leather can be cleaned repeatedly without surface damage by simply a cleaning cloth. Designed with a Thick Cure Foam seat that is 2 times heavier than regular foam that maintains its shape. Features a full-tilt locking mechanism that lets you customize your seat to your comfort.	red
-6	The Throne	299999	The crown jewel. Sharp edges, fine lines, and a royal design that will elevate you to new heights.	Adjustable headrest and lumbar support pillows provide comfort that lasts. Raise or lower your chair, tweaking the height and depth of your armrests, and reclining between 90-130 degrees. Full 360 degrees swivel rotation enable dynamic movement. Upholstered in bonded leather in bold, contrasting colors but maintains a professional look.	grey
-7	The Soldier	249999	Built to be tough. You will do anything but blend into the crowd as you earn your prestige.	The earthy tones of the camouflage brings the outdoors, indoors. Built with an ergonomic shape that curves with and protects the natural shape of the back, this chair will keep you supported even with extended use.	camo
-8	The Executive	349999	Refined, classy, premium. Designed by CEOs, for CEOs.	The chair sits on a trumpet pedestal base that provides sturdy support, swivels 360 degrees to make movement easy, and features a tilt tension adjustment that controls how easily the chair rocks back. The Executive choice!	black
-9	The Commander	274999	Break the mold with different color tones that will stand out. Unique, fresh, and innovative choices make this the best seat in the house.	Unparalleled design, a padded headrest to keep you gaming for hours. The five-star pedestal base with lockable wheels, adjustable armrests with four dimensions of movement, and the widened seat promotes blood flow and decreases fatigue. Get in the game, and take Command!	pink
+9	The Commander	27499	Break the mold with different color tones that will stand out. Unique, fresh, and innovative choices make this the best seat in the house.	Unparalleled design, a padded headrest to keep you gaming for hours. The five-star pedestal base with lockable wheels, adjustable armrests with four dimensions of movement, and the widened seat promotes blood flow and decreases fatigue. Get in the game, and take Command!	white
+5	The Racer	29999	Leave your rivals in the dust with The Racer. Premium leather, designer flair and a two-tone finish that belongs on the track.	Stain-resistant 2.0 PU leather can be cleaned repeatedly without surface damage by simply a cleaning cloth. Designed with a Thick Cure Foam seat that is 2 times heavier than regular foam that maintains its shape. Features a full-tilt locking mechanism that lets you customize your seat to your comfort.	red
+2	The Streamer	27499	Designed for optimum performance, The Streamer is prepped for gaming marathons that will maximize your K/D ratio.	We see you, gamer, we know your needs are different than the average person. This chair is built with you in mind, comfort features includes a high back, flip up armrests, support pillows for lumbar and neck support, and a premium leather upholstry. Sit back and game in style!	blue
+3	The Tuxedo	24999	Flashy, bold, revolutionary. Unlike your actual suit, this chair will make a statement and give you room to breathe at the same time.	This chair will put you above the rest and give you maximum comfort and productivity. Features a reclining back mechanism, tilt & tension mechanism control, ajustable headrest and lumbar support cushions, swivel armrests.	white
+4	The Plush	19999	Premium and luxurious, The Plush will make all your friends jealous.	The Plush is an eye catching spectacle of a chair. The ulimate gaming chair is made with a synthetic flex upholstry and features a height adjustable memory foam seat, reclining back mechanism up to 150 degrees, and ergonomic adjustable headrest and lumbar support pillows.	orange
+8	The Executive	34999	Refined, classy, premium. Designed by CEOs, for CEOs.	The chair sits on a trumpet pedestal base that provides sturdy support, swivels 360 degrees to make movement easy, and features a tilt tension adjustment that controls how easily the chair rocks back. The Executive choice!	black
+7	The Soldier	24999	Built to be tough. You will do anything but blend into the crowd as you earn your prestige.	The earthy tones of the camouflage brings the outdoors, indoors. Built with an ergonomic shape that curves with and protects the natural shape of the back, this chair will keep you supported even with extended use.	camo
+6	The Throne	29999	The crown jewel. Sharp edges, fine lines, and a royal design that will elevate you to new heights.	Adjustable headrest and lumbar support pillows provide comfort that lasts. Raise or lower your chair, tweaking the height and depth of your armrests, and reclining between 90-130 degrees. Full 360 degrees swivel rotation enable dynamic movement. Upholstered in bonded leather in bold, contrasting colors but maintains a professional look.	blue
+1	The Standard	19999	The defining style of comfort and practicality, a fine choice for one seeking a subtle charm.	Upholstered in Softhead Leather contrasting colored mesh for an aggressive style and cool feel. Features height adjustment, seat back recline control, flip up arms and 360 degrees of swivel.	black
 \.
 
 
@@ -317,6 +366,13 @@ COPY public.products_images (productid, imageid) FROM stdin;
 
 
 --
+-- Name: carts_cartId_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public."carts_cartId_seq"', 1, false);
+
+
+--
 -- Name: colors_colorid_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -335,6 +391,14 @@ SELECT pg_catalog.setval('public.images_imageid_seq', 5, true);
 --
 
 SELECT pg_catalog.setval('public.products_productid_seq', 1, false);
+
+
+--
+-- Name: carts carts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.carts
+    ADD CONSTRAINT carts_pkey PRIMARY KEY ("cartId");
 
 
 --

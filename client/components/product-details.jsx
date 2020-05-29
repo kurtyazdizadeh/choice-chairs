@@ -33,7 +33,7 @@ class ProductDetails extends React.Component {
 
   render() {
     if (this.state.product) {
-      const { productid, name, images, colors, chosencolor, price, shortdescription, longdescription } = this.state.product;
+      const { productId, name, images, colors, chosenColor, price, shortDescription, longDescription } = this.state.product;
       return (
         <div className="card col-11 col-md-8 d-flex flex-column m-3">
           <div className="row p-3">
@@ -47,7 +47,7 @@ class ProductDetails extends React.Component {
             </h4>
           </div>
           <div className="row">
-            <Gallery color={chosencolor} images={images} productId={productid} />
+            <Gallery color={chosenColor} images={images} productId={productId} />
             {/* <img src={`../images/${productid}/${chosencolor}-${images[0]}.webp`} alt={name} className="col-12 col-md-6 scale limit-height" /> */}
             <div className="product-info d-flex flex-column col-12 col-md-6">
               <h2 className="font-weight-bold">{name}</h2>
@@ -61,15 +61,15 @@ class ProductDetails extends React.Component {
                         key={index}
                         className={`${color} color ml-0 pointer`}
                         onClick={() => {
-                          this.props.history.push(`/details/${productid}?color=${color}`);
-                          this.getProductDetails(productid, color);
+                          this.props.history.push(`/details/${productId}?color=${color}`);
+                          this.getProductDetails(productId, color);
                         }}
                       >
                       </div>);
                   })
                 }
               </div>
-              <p>{shortdescription}</p>
+              <p>{shortDescription}</p>
               <button
                 type="button"
                 className="btn btn-primary"
@@ -82,7 +82,7 @@ class ProductDetails extends React.Component {
             </div>
           </div>
           <div className="row p-3">
-            {longdescription}
+            {longDescription}
           </div>
         </div>
       );
