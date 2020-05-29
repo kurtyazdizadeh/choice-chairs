@@ -21,13 +21,55 @@ app.get('/api/health-check', (req, res, next) => {
 
 app.get('/api/products', (req, res, next) => {
   const sql = `
-    select *
-      from "products"
+    SELECT
+      "p".*,
+      ARRAY_AGG(distinct "c"."name") AS "colors",
+      ARRAY_AGG(distinct "i"."imagetype") AS "images"
+    FROM products as "p"
+      JOIN products_colors USING ("productid")
+      JOIN colors as "c" USING ("colorid")
+      JOIN products_images USING ("productid")
+      JOIN images as "i" USING ("imageid")
+    GROUP BY productid
+    ORDER BY productid;
   `;
   db.query(sql)
     .then(result => {
       const products = result.rows;
       res.json(products);
+    })
+    .catch(err => next(err));
+});
+
+app.get('/api/products/:productId', (req, res, next) => {
+  const { productId } = req.params;
+  if (!parseInt(productId, 10)) {
+    return res.status(400).json({
+      error: '"productId" must be a positive integer'
+    });
+  }
+  const sql = `
+    SELECT
+      "p".*,
+      ARRAY_AGG(distinct "c"."name") AS "colors",
+      ARRAY_AGG(distinct "i"."imagetype") AS "images"
+    FROM products as "p"
+      JOIN products_colors USING ("productid")
+      JOIN colors as "c" USING ("colorid")
+      JOIN products_images USING ("productid")
+      JOIN images as "i" USING ("imageid")
+    WHERE productid = $1
+    GROUP BY productid;
+    `;
+  const params = [productId];
+  db.query(sql, params)
+    .then(result => {
+      const product = result.rows[0];
+      if (!product) {
+        next();
+      } else {
+        res.status(200).json(product);
+      }
     })
     .catch(err => next(err));
 });

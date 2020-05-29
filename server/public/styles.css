@@ -29,3 +29,38 @@ html {
 .product-item img.top:hover {
   opacity: 0;
 }
+
+.color {
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border: 1px solid lightgrey;
+  display: inline-block;
+}
+.black {
+ background-color: black;
+}
+.blue {
+  background-color: blue;
+}
+.camo {
+  background-image: url('./images/camo.png');
+}
+.green {
+  background-color: #C3D94C;
+}
+.grey {
+  background-color: grey;
+}
+.orange {
+  background-color: orange;
+}
+.pink {
+  background-color: pink;
+}
+.red {
+  background-color: red;
+}
+.white {
+  background-color: white;
+}
