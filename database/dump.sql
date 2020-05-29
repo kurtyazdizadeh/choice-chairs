@@ -24,10 +24,12 @@ ALTER TABLE ONLY public.products DROP CONSTRAINT products_pkey;
 ALTER TABLE ONLY public.images DROP CONSTRAINT images_pkey;
 ALTER TABLE ONLY public.colors DROP CONSTRAINT colors_pkey;
 ALTER TABLE ONLY public.carts DROP CONSTRAINT carts_pkey;
-ALTER TABLE public.products ALTER COLUMN productid DROP DEFAULT;
-ALTER TABLE public.images ALTER COLUMN imageid DROP DEFAULT;
-ALTER TABLE public.colors ALTER COLUMN colorid DROP DEFAULT;
+ALTER TABLE ONLY public.cartitems DROP CONSTRAINT cartitems_pkey;
+ALTER TABLE public.products ALTER COLUMN "productId" DROP DEFAULT;
+ALTER TABLE public.images ALTER COLUMN "imageId" DROP DEFAULT;
+ALTER TABLE public.colors ALTER COLUMN "colorId" DROP DEFAULT;
 ALTER TABLE public.carts ALTER COLUMN "cartId" DROP DEFAULT;
+ALTER TABLE public.cartitems ALTER COLUMN "cartItemId" DROP DEFAULT;
 DROP SEQUENCE public.products_productid_seq;
 DROP TABLE public.products_images;
 DROP TABLE public.products_colors;
@@ -38,6 +40,8 @@ DROP SEQUENCE public.colors_colorid_seq;
 DROP TABLE public.colors;
 DROP SEQUENCE public."carts_cartId_seq";
 DROP TABLE public.carts;
+DROP SEQUENCE public."cartitems_cartItemId_seq";
+DROP TABLE public.cartitems;
 DROP EXTENSION plpgsql;
 DROP SCHEMA public;
 --
@@ -71,6 +75,39 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: cartitems; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.cartitems (
+    "cartItemId" integer NOT NULL,
+    "cartId" integer NOT NULL,
+    "productId" integer NOT NULL,
+    price integer NOT NULL,
+    color text NOT NULL
+);
+
+
+--
+-- Name: cartitems_cartItemId_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public."cartitems_cartItemId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: cartitems_cartItemId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public."cartitems_cartItemId_seq" OWNED BY public.cartitems."cartItemId";
+
 
 --
 -- Name: carts; Type: TABLE; Schema: public; Owner: -
@@ -107,7 +144,7 @@ ALTER SEQUENCE public."carts_cartId_seq" OWNED BY public.carts."cartId";
 --
 
 CREATE TABLE public.colors (
-    colorid integer NOT NULL,
+    "colorId" integer NOT NULL,
     name text NOT NULL
 );
 
@@ -129,7 +166,7 @@ CREATE SEQUENCE public.colors_colorid_seq
 -- Name: colors_colorid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.colors_colorid_seq OWNED BY public.colors.colorid;
+ALTER SEQUENCE public.colors_colorid_seq OWNED BY public.colors."colorId";
 
 
 --
@@ -137,8 +174,8 @@ ALTER SEQUENCE public.colors_colorid_seq OWNED BY public.colors.colorid;
 --
 
 CREATE TABLE public.images (
-    imageid integer NOT NULL,
-    imagetype text NOT NULL
+    "imageId" integer NOT NULL,
+    "imageType" text NOT NULL
 );
 
 
@@ -159,7 +196,7 @@ CREATE SEQUENCE public.images_imageid_seq
 -- Name: images_imageid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.images_imageid_seq OWNED BY public.images.imageid;
+ALTER SEQUENCE public.images_imageid_seq OWNED BY public.images."imageId";
 
 
 --
@@ -167,12 +204,12 @@ ALTER SEQUENCE public.images_imageid_seq OWNED BY public.images.imageid;
 --
 
 CREATE TABLE public.products (
-    productid integer NOT NULL,
+    "productId" integer NOT NULL,
     name text NOT NULL,
     price integer NOT NULL,
-    shortdescription text NOT NULL,
-    longdescription text NOT NULL,
-    chosencolor text NOT NULL
+    "shortDescription" text NOT NULL,
+    "longDescription" text NOT NULL,
+    "chosenColor" text NOT NULL
 );
 
 
@@ -181,8 +218,8 @@ CREATE TABLE public.products (
 --
 
 CREATE TABLE public.products_colors (
-    productid integer,
-    colorid integer
+    "productId" integer,
+    "colorId" integer
 );
 
 
@@ -191,8 +228,8 @@ CREATE TABLE public.products_colors (
 --
 
 CREATE TABLE public.products_images (
-    productid integer,
-    imageid integer
+    "productId" integer,
+    "imageId" integer
 );
 
 
@@ -213,7 +250,14 @@ CREATE SEQUENCE public.products_productid_seq
 -- Name: products_productid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.products_productid_seq OWNED BY public.products.productid;
+ALTER SEQUENCE public.products_productid_seq OWNED BY public.products."productId";
+
+
+--
+-- Name: cartitems cartItemId; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cartitems ALTER COLUMN "cartItemId" SET DEFAULT nextval('public."cartitems_cartItemId_seq"'::regclass);
 
 
 --
@@ -224,24 +268,32 @@ ALTER TABLE ONLY public.carts ALTER COLUMN "cartId" SET DEFAULT nextval('public.
 
 
 --
--- Name: colors colorid; Type: DEFAULT; Schema: public; Owner: -
+-- Name: colors colorId; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.colors ALTER COLUMN colorid SET DEFAULT nextval('public.colors_colorid_seq'::regclass);
-
-
---
--- Name: images imageid; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.images ALTER COLUMN imageid SET DEFAULT nextval('public.images_imageid_seq'::regclass);
+ALTER TABLE ONLY public.colors ALTER COLUMN "colorId" SET DEFAULT nextval('public.colors_colorid_seq'::regclass);
 
 
 --
--- Name: products productid; Type: DEFAULT; Schema: public; Owner: -
+-- Name: images imageId; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.products ALTER COLUMN productid SET DEFAULT nextval('public.products_productid_seq'::regclass);
+ALTER TABLE ONLY public.images ALTER COLUMN "imageId" SET DEFAULT nextval('public.images_imageid_seq'::regclass);
+
+
+--
+-- Name: products productId; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.products ALTER COLUMN "productId" SET DEFAULT nextval('public.products_productid_seq'::regclass);
+
+
+--
+-- Data for Name: cartitems; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.cartitems ("cartItemId", "cartId", "productId", price, color) FROM stdin;
+\.
 
 
 --
@@ -256,7 +308,7 @@ COPY public.carts ("cartId", "createdAt") FROM stdin;
 -- Data for Name: colors; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.colors (colorid, name) FROM stdin;
+COPY public.colors ("colorId", name) FROM stdin;
 1	black
 2	blue
 3	camo
@@ -273,7 +325,7 @@ COPY public.colors (colorid, name) FROM stdin;
 -- Data for Name: images; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.images (imageid, imagetype) FROM stdin;
+COPY public.images ("imageId", "imageType") FROM stdin;
 1	default
 2	front
 3	right
@@ -286,16 +338,16 @@ COPY public.images (imageid, imagetype) FROM stdin;
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.products (productid, name, price, shortdescription, longdescription, chosencolor) FROM stdin;
+COPY public.products ("productId", name, price, "shortDescription", "longDescription", "chosenColor") FROM stdin;
+6	The Throne	29999	The crown jewel. Sharp edges, fine lines, and a royal design that will elevate you to new heights.	Adjustable headrest and lumbar support pillows provide comfort that lasts. Raise or lower your chair, tweaking the height and depth of your armrests, and reclining between 90-130 degrees. Full 360 degrees swivel rotation enable dynamic movement. Upholstered in bonded leather in bold, contrasting colors but maintains a professional look.	blue
 9	The Commander	27499	Break the mold with different color tones that will stand out. Unique, fresh, and innovative choices make this the best seat in the house.	Unparalleled design, a padded headrest to keep you gaming for hours. The five-star pedestal base with lockable wheels, adjustable armrests with four dimensions of movement, and the widened seat promotes blood flow and decreases fatigue. Get in the game, and take Command!	white
+8	The Executive	34999	Refined, classy, premium. Designed by CEOs, for CEOs.	The chair sits on a trumpet pedestal base that provides sturdy support, swivels 360 degrees to make movement easy, and features a tilt tension adjustment that controls how easily the chair rocks back. The Executive choice!	blue
+7	The Soldier	24999	Built to be tough. You will do anything but blend into the crowd as you earn your prestige.	The earthy tones of the camouflage brings the outdoors, indoors. Built with an ergonomic shape that curves with and protects the natural shape of the back, this chair will keep you supported even with extended use.	camo
 5	The Racer	29999	Leave your rivals in the dust with The Racer. Premium leather, designer flair and a two-tone finish that belongs on the track.	Stain-resistant 2.0 PU leather can be cleaned repeatedly without surface damage by simply a cleaning cloth. Designed with a Thick Cure Foam seat that is 2 times heavier than regular foam that maintains its shape. Features a full-tilt locking mechanism that lets you customize your seat to your comfort.	red
-2	The Streamer	27499	Designed for optimum performance, The Streamer is prepped for gaming marathons that will maximize your K/D ratio.	We see you, gamer, we know your needs are different than the average person. This chair is built with you in mind, comfort features includes a high back, flip up armrests, support pillows for lumbar and neck support, and a premium leather upholstry. Sit back and game in style!	blue
+1	The Standard	19999	The defining style of comfort and practicality, a fine choice for one seeking a subtle charm.	Upholstered in Softhead Leather contrasting colored mesh for an aggressive style and cool feel. Features height adjustment, seat back recline control, flip up arms and 360 degrees of swivel.	black
 3	The Tuxedo	24999	Flashy, bold, revolutionary. Unlike your actual suit, this chair will make a statement and give you room to breathe at the same time.	This chair will put you above the rest and give you maximum comfort and productivity. Features a reclining back mechanism, tilt & tension mechanism control, ajustable headrest and lumbar support cushions, swivel armrests.	white
 4	The Plush	19999	Premium and luxurious, The Plush will make all your friends jealous.	The Plush is an eye catching spectacle of a chair. The ulimate gaming chair is made with a synthetic flex upholstry and features a height adjustable memory foam seat, reclining back mechanism up to 150 degrees, and ergonomic adjustable headrest and lumbar support pillows.	orange
-8	The Executive	34999	Refined, classy, premium. Designed by CEOs, for CEOs.	The chair sits on a trumpet pedestal base that provides sturdy support, swivels 360 degrees to make movement easy, and features a tilt tension adjustment that controls how easily the chair rocks back. The Executive choice!	black
-7	The Soldier	24999	Built to be tough. You will do anything but blend into the crowd as you earn your prestige.	The earthy tones of the camouflage brings the outdoors, indoors. Built with an ergonomic shape that curves with and protects the natural shape of the back, this chair will keep you supported even with extended use.	camo
-6	The Throne	29999	The crown jewel. Sharp edges, fine lines, and a royal design that will elevate you to new heights.	Adjustable headrest and lumbar support pillows provide comfort that lasts. Raise or lower your chair, tweaking the height and depth of your armrests, and reclining between 90-130 degrees. Full 360 degrees swivel rotation enable dynamic movement. Upholstered in bonded leather in bold, contrasting colors but maintains a professional look.	blue
-1	The Standard	19999	The defining style of comfort and practicality, a fine choice for one seeking a subtle charm.	Upholstered in Softhead Leather contrasting colored mesh for an aggressive style and cool feel. Features height adjustment, seat back recline control, flip up arms and 360 degrees of swivel.	black
+2	The Streamer	27499	Designed for optimum performance, The Streamer is prepped for gaming marathons that will maximize your K/D ratio.	We see you, gamer, we know your needs are different than the average person. This chair is built with you in mind, comfort features includes a high back, flip up armrests, support pillows for lumbar and neck support, and a premium leather upholstry. Sit back and game in style!	blue
 \.
 
 
@@ -303,7 +355,7 @@ COPY public.products (productid, name, price, shortdescription, longdescription,
 -- Data for Name: products_colors; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.products_colors (productid, colorid) FROM stdin;
+COPY public.products_colors ("productId", "colorId") FROM stdin;
 1	1
 1	9
 2	2
@@ -327,7 +379,7 @@ COPY public.products_colors (productid, colorid) FROM stdin;
 -- Data for Name: products_images; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.products_images (productid, imageid) FROM stdin;
+COPY public.products_images ("productId", "imageId") FROM stdin;
 1	1
 1	2
 1	3
@@ -366,10 +418,17 @@ COPY public.products_images (productid, imageid) FROM stdin;
 
 
 --
+-- Name: cartitems_cartItemId_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public."cartitems_cartItemId_seq"', 1, true);
+
+
+--
 -- Name: carts_cartId_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."carts_cartId_seq"', 1, false);
+SELECT pg_catalog.setval('public."carts_cartId_seq"', 1, true);
 
 
 --
@@ -394,6 +453,14 @@ SELECT pg_catalog.setval('public.products_productid_seq', 1, false);
 
 
 --
+-- Name: cartitems cartitems_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cartitems
+    ADD CONSTRAINT cartitems_pkey PRIMARY KEY ("cartItemId");
+
+
+--
 -- Name: carts carts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -406,7 +473,7 @@ ALTER TABLE ONLY public.carts
 --
 
 ALTER TABLE ONLY public.colors
-    ADD CONSTRAINT colors_pkey PRIMARY KEY (colorid);
+    ADD CONSTRAINT colors_pkey PRIMARY KEY ("colorId");
 
 
 --
@@ -414,7 +481,7 @@ ALTER TABLE ONLY public.colors
 --
 
 ALTER TABLE ONLY public.images
-    ADD CONSTRAINT images_pkey PRIMARY KEY (imageid);
+    ADD CONSTRAINT images_pkey PRIMARY KEY ("imageId");
 
 
 --
@@ -422,7 +489,7 @@ ALTER TABLE ONLY public.images
 --
 
 ALTER TABLE ONLY public.products
-    ADD CONSTRAINT products_pkey PRIMARY KEY (productid);
+    ADD CONSTRAINT products_pkey PRIMARY KEY ("productId");
 
 
 --
@@ -430,7 +497,7 @@ ALTER TABLE ONLY public.products
 --
 
 ALTER TABLE ONLY public.products_colors
-    ADD CONSTRAINT products_colors_colorid_fkey FOREIGN KEY (colorid) REFERENCES public.colors(colorid);
+    ADD CONSTRAINT products_colors_colorid_fkey FOREIGN KEY ("colorId") REFERENCES public.colors("colorId");
 
 
 --
@@ -438,7 +505,7 @@ ALTER TABLE ONLY public.products_colors
 --
 
 ALTER TABLE ONLY public.products_colors
-    ADD CONSTRAINT products_colors_productid_fkey FOREIGN KEY (productid) REFERENCES public.products(productid);
+    ADD CONSTRAINT products_colors_productid_fkey FOREIGN KEY ("productId") REFERENCES public.products("productId");
 
 
 --
@@ -446,7 +513,7 @@ ALTER TABLE ONLY public.products_colors
 --
 
 ALTER TABLE ONLY public.products_images
-    ADD CONSTRAINT products_images_imageid_fkey FOREIGN KEY (imageid) REFERENCES public.images(imageid);
+    ADD CONSTRAINT products_images_imageid_fkey FOREIGN KEY ("imageId") REFERENCES public.images("imageId");
 
 
 --
@@ -454,7 +521,7 @@ ALTER TABLE ONLY public.products_images
 --
 
 ALTER TABLE ONLY public.products_images
-    ADD CONSTRAINT products_images_productid_fkey FOREIGN KEY (productid) REFERENCES public.products(productid);
+    ADD CONSTRAINT products_images_productid_fkey FOREIGN KEY ("productId") REFERENCES public.products("productId");
 
 
 --
