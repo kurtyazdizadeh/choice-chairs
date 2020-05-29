@@ -1,19 +1,28 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 class ProductListItem extends React.Component {
-
   render() {
-    const { name, price, desc, images, colorOptions, productId } = this.props;
+    const { name, price, desc, images, color, colorOptions, productId } = this.props;
     return (
       <div
         className="card product-item m-2 col-11 col-md-5 col-lg-3"
-        // onClick={() => {
-        //   setView(name, { productId: productId });
-        // }}
       >
-        <div className="card-image pointer">
-          <img src={`./images/${productId}/${colorOptions[0]}-${images[1]}.webp`} className="card-img-top mt-3 scale img-fluid bottom" alt={name} />
-          <img src={`./images/${productId}/${colorOptions[0]}-${images[0]}.webp`} className="card-img-top mt-3 scale img-fluid top" alt={name} />
+        <div className="card-image pointer"
+          onClick={() => {
+            this.props.history.push(`/details/${productId}?color=${color}`);
+          }}
+        >
+          <img
+            src={`./images/${productId}/${colorOptions[0]}-${images[1]}.webp`}
+            className="card-img-top mt-3 scale img-fluid bottom"
+            alt={name}
+          />
+          <img
+            src={`./images/${productId}/${colorOptions[0]}-${images[0]}.webp`}
+            className="card-img-top mt-3 scale img-fluid top"
+            alt={name}
+          />
         </div>
         <div className="card-body">
           <div className="d-flex">
@@ -25,7 +34,15 @@ class ProductListItem extends React.Component {
               <h6 className="my-1">Colors:</h6>
               {
                 colorOptions.map((color, index) => {
-                  return <div key={index} className={`${color} color ml-0 pointer`}></div>;
+                  return (
+                    <div
+                      key={index}
+                      className={`${color} color ml-0 pointer`}
+                      onClick={() => {
+                        this.props.history.push(`/details/${productId}?color=${color}`);
+                      }}
+                    >
+                    </div>);
                 })
               }
             </div>
@@ -37,4 +54,4 @@ class ProductListItem extends React.Component {
   }
 }
 
-export default ProductListItem;
+export default withRouter(ProductListItem);
