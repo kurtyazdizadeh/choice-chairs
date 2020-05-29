@@ -21,17 +21,17 @@ app.get('/api/health-check', (req, res, next) => {
 
 app.get('/api/products', (req, res, next) => {
   const sql = `
-    select
-    "p".*,
-      array_agg(distinct "c"."name") as "colors",
-      array_agg(distinct "i"."imagetype") as "images"
-    from products as "p"
-    join products_colors using("productid")
-    join colors as "c" using("colorid")
-    join products_images using("productid")
-    join images as "i" using("imageid")
-    group by productid
-    order by productid;
+    SELECT
+      "p".*,
+      ARRAY_AGG(distinct "c"."name") AS "colors",
+      ARRAY_AGG(distinct "i"."imagetype") AS "images"
+    FROM products as "p"
+      JOIN products_colors USING ("productid")
+      JOIN colors as "c" USING ("colorid")
+      JOIN products_images USING ("productid")
+      JOIN images as "i" USING ("imageid")
+    GROUP BY productid
+    ORDER BY productid;
   `;
   db.query(sql)
     .then(result => {
@@ -49,9 +49,17 @@ app.get('/api/products/:productId', (req, res, next) => {
     });
   }
   const sql = `
-    select *
-      from "products"
-      where productid = $1
+    SELECT
+      "p".*,
+      ARRAY_AGG(distinct "c"."name") AS "colors",
+      ARRAY_AGG(distinct "i"."imagetype") AS "images"
+    FROM products as "p"
+      JOIN products_colors USING ("productid")
+      JOIN colors as "c" USING ("colorid")
+      JOIN products_images USING ("productid")
+      JOIN images as "i" USING ("imageid")
+    WHERE productid = $1
+    GROUP BY productid;
     `;
   const params = [productId];
   db.query(sql, params)
