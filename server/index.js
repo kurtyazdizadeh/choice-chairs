@@ -24,14 +24,14 @@ app.get('/api/products', (req, res, next) => {
     SELECT
       "p".*,
       ARRAY_AGG(distinct "c"."name") AS "colors",
-      ARRAY_AGG(distinct "i"."imagetype") AS "images"
+      ARRAY_AGG(distinct "i"."imageType") AS "images"
     FROM products as "p"
-      JOIN products_colors USING ("productid")
-      JOIN colors as "c" USING ("colorid")
-      JOIN products_images USING ("productid")
-      JOIN images as "i" USING ("imageid")
-    GROUP BY productid
-    ORDER BY productid;
+      JOIN products_colors USING ("productId")
+      JOIN colors as "c" USING ("colorId")
+      JOIN products_images USING ("productId")
+      JOIN images as "i" USING ("imageId")
+    GROUP BY "productId"
+    ORDER BY "productId";
   `;
   db.query(sql)
     .then(result => {
@@ -51,8 +51,8 @@ app.patch('/api/products/:productId-:color', (req, res, next) => {
   }
   const sql = `
     UPDATE products
-    SET chosencolor = $1
-    WHERE productid = $2;
+    SET "chosenColor" = $1
+    WHERE "productId" = $2;
   `;
   const params = [color, productId];
   db.query(sql, params)
@@ -61,14 +61,14 @@ app.patch('/api/products/:productId-:color', (req, res, next) => {
         SELECT
           "p".*,
           ARRAY_AGG(distinct "c"."name") AS "colors",
-          ARRAY_AGG(distinct "i"."imagetype") AS "images"
+          ARRAY_AGG(distinct "i"."imageType") AS "images"
         FROM products as "p"
-          JOIN products_colors USING ("productid")
-          JOIN colors as "c" USING ("colorid")
-          JOIN products_images USING ("productid")
-          JOIN images as "i" USING ("imageid")
-        WHERE productid = $1
-        GROUP BY productid
+          JOIN products_colors USING ("productId")
+          JOIN colors as "c" USING ("colorId")
+          JOIN products_images USING ("productId")
+          JOIN images as "i" USING ("imageId")
+        WHERE "productId" = $1
+        GROUP BY "productId"
       ;`;
       const productId = [params[1]];
       db.query(select, productId)
@@ -84,6 +84,107 @@ app.patch('/api/products/:productId-:color', (req, res, next) => {
     })
     .catch(err => next(err));
 
+});
+
+app.get('/api/cart', (req, res, next) => {
+  if (!req.session.cartId) {
+    return res.json([]);
+  }
+  const sql = `
+     SELECT "c"."cartItemId",
+            "c"."price",
+            "p"."productId",
+            "p"."chosenColor",
+            "p"."name",
+            "p"."shortDescription"
+        FROM cartItems as "c"
+        JOIN products as "p" USING ("productId")
+       WHERE "c"."cartId" = $1
+    `;
+  const { cartId } = req.session;
+  const params = [cartId];
+  db.query(sql, params)
+    .then(result => {
+      res.json(result.rows);
+    })
+    .catch(err => next(err));
+});
+
+app.post('/api/cart', (req, res, next) => {
+  const { productId, color } = req.body;
+  if (!parseInt(productId, 10)) {
+    return res.status(400).json({
+      error: '"productId" must be a positive integer'
+    });
+  }
+  const sql = `
+      SELECT "price"
+        FROM  products
+       WHERE "productId" = $1;
+    `;
+  const params = [productId];
+  db.query(sql, params)
+    .then(result => {
+      if (!result.rows.length) {
+        throw new ClientError('cannot find product', 400);
+      }
+      const { price } = result.rows[0];
+      if (req.session.cartId) {
+        const { cartId } = req.session;
+        return { cartId, price };
+      }
+      const sql = `
+        INSERT INTO carts ("cartId", "createdAt")
+        VALUES (default, default)
+        RETURNING "cartId";
+      `;
+      return (
+        db.query(sql)
+          .then(result => {
+            const { cartId } = result.rows[0];
+            return { cartId, price };
+          })
+      );
+    })
+    .then(data => {
+      const { cartId, price } = data;
+      req.session.cartId = cartId;
+      const sql = `
+        INSERT INTO cartItems ("cartId", "productId", "price", "color")
+        VALUES ($1, $2, $3, $4)
+        RETURNING "cartItemId";
+      `;
+      const params = [cartId, productId, price, color];
+      return (
+        db.query(sql, params)
+          .then(result => {
+            const { cartItemId } = result.rows[0];
+            return cartItemId;
+          })
+      );
+    })
+    .then(cartItemId => {
+      const sql = `
+        SELECT "c"."cartItemId",
+                "c"."price",
+                "p"."productId",
+                "p"."chosenColor",
+                "p"."name",
+                "p"."shortDescription"
+           FROM cartItems AS "c"
+           JOIN products AS "p" USING ("productId")
+          WHERE "c"."cartItemId" = $1
+      `;
+      const params = [cartItemId];
+      return (
+        db.query(sql, params)
+          .then(result => {
+            const cartItem = result.rows[0];
+            res.status(201).json(cartItem);
+          })
+      );
+    })
+    .catch(err => next(err));
 });
 
 app.use('/api', (req, res, next) => {

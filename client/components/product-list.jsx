@@ -28,17 +28,17 @@ class ProductList extends React.Component {
 
   renderListItems() {
     const listItemElements = this.state.products.map(product => {
-      const { productid, name, price, chosencolor, colors, images, shortdescription, longdescription } = product;
+      const { productId, name, price, chosenColor, colors, images, shortDescription, longDescription } = product;
       return (
         <ProductListItem
-          key={productid}
-          productId={productid}
+          key={productId}
+          productId={productId}
           name={name}
           images={images}
           price={(price / 100).toFixed(2)}
-          desc={shortdescription}
-          longDesc={longdescription}
-          color={chosencolor}
+          desc={shortDescription}
+          longDesc={longDescription}
+          color={chosenColor}
           colorOptions={colors}
         />
       );
