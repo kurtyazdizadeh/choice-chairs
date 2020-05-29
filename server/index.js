@@ -41,37 +41,49 @@ app.get('/api/products', (req, res, next) => {
     .catch(err => next(err));
 });
 
-app.get('/api/products/:productId', (req, res, next) => {
-  const { productId } = req.params;
+app.patch('/api/products/:productId-:color', (req, res, next) => {
+  const { color, productId } = req.params;
+
   if (!parseInt(productId, 10)) {
     return res.status(400).json({
       error: '"productId" must be a positive integer'
     });
   }
   const sql = `
-    SELECT
-      "p".*,
-      ARRAY_AGG(distinct "c"."name") AS "colors",
-      ARRAY_AGG(distinct "i"."imagetype") AS "images"
-    FROM products as "p"
-      JOIN products_colors USING ("productid")
-      JOIN colors as "c" USING ("colorid")
-      JOIN products_images USING ("productid")
-      JOIN images as "i" USING ("imageid")
-    WHERE productid = $1
-    GROUP BY productid;
-    `;
-  const params = [productId];
+    UPDATE products
+    SET chosencolor = $1
+    WHERE productid = $2;
+  `;
+  const params = [color, productId];
   db.query(sql, params)
     .then(result => {
-      const product = result.rows[0];
-      if (!product) {
-        next();
-      } else {
-        res.status(200).json(product);
-      }
+      const select = `
+        SELECT
+          "p".*,
+          ARRAY_AGG(distinct "c"."name") AS "colors",
+          ARRAY_AGG(distinct "i"."imagetype") AS "images"
+        FROM products as "p"
+          JOIN products_colors USING ("productid")
+          JOIN colors as "c" USING ("colorid")
+          JOIN products_images USING ("productid")
+          JOIN images as "i" USING ("imageid")
+        WHERE productid = $1
+        GROUP BY productid
+      ;`;
+      const productId = [params[1]];
+      db.query(select, productId)
+        .then(result => {
+          const product = result.rows[0];
+          if (!product) {
+            next();
+          } else {
+            res.status(200).json(product);
+          }
+        })
+        .catch(err => next(err));
     })
     .catch(err => next(err));
+
 });
 
 app.use('/api', (req, res, next) => {
