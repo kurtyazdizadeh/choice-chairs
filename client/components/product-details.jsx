@@ -56,7 +56,6 @@ class ProductDetails extends React.Component {
           </div>
           <div className="row">
             <Gallery color={chosenColor} images={images} productId={productId} />
-            {/* <img src={`../images/${productid}/${chosencolor}-${images[0]}.webp`} alt={name} className="col-12 col-md-6 scale limit-height" /> */}
             <div className="product-info d-flex flex-column col-12 col-md-6">
               <h2 className="font-weight-bold">{name}</h2>
               <h3 className="text-secondary">${(price / 100).toFixed(2)}</h3>
