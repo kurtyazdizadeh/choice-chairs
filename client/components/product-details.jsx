@@ -10,6 +10,14 @@ class ProductDetails extends React.Component {
   }
 
   componentDidMount() {
+    this.loadProductComponent();
+  }
+
+  componentDidUpdate() {
+    this.loadProductComponent();
+  }
+
+  loadProductComponent() {
     const { productId } = this.props.match.params;
     const searchQuery = new URLSearchParams(this.props.location.search);
     const color = searchQuery.get('color');
