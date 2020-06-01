@@ -16,9 +16,9 @@ class Header extends React.Component {
         </h3>
         <span
           className="pointer"
-          // onClick={() => {
-          //   this.props.history.push('/cart');
-          // }}
+          onClick={() => {
+            this.props.history.push('/cart');
+          }}
         >
           {this.props.cartItemCount} Items &nbsp;
           <i className="fas fa-shopping-cart"></i>
