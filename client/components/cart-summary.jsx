@@ -6,9 +6,14 @@ class CartSummary extends React.Component {
   renderSummaryItems() {
     const itemElements = this.props.cart.map((item, index) => {
       return (
-        <CartSummaryItem key={index} item={item} />
+        <CartSummaryItem
+          key={index}
+          item={item}
+          deleteFromCart={this.props.deleteFromCart}
+        />
       );
     });
+
     if (itemElements.length > 0) return itemElements;
     return <h4 className="m-3 text-center">There are no items in your cart.</h4>;
   }
