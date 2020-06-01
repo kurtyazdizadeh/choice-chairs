@@ -25,11 +25,11 @@ app.get('/api/products', (req, res, next) => {
       "p".*,
       ARRAY_AGG(distinct "c"."name") AS "colors",
       ARRAY_AGG(distinct "i"."imageType") AS "images"
-    FROM products as "p"
+    FROM products AS "p"
       JOIN products_colors USING ("productId")
-      JOIN colors as "c" USING ("colorId")
+      JOIN colors AS "c" USING ("colorId")
       JOIN products_images USING ("productId")
-      JOIN images as "i" USING ("imageId")
+      JOIN images AS "i" USING ("imageId")
     GROUP BY "productId"
     ORDER BY "productId";
   `;
@@ -62,11 +62,11 @@ app.patch('/api/products/:productId-:color', (req, res, next) => {
           "p".*,
           ARRAY_AGG(distinct "c"."name") AS "colors",
           ARRAY_AGG(distinct "i"."imageType") AS "images"
-        FROM products as "p"
+        FROM products AS "p"
           JOIN products_colors USING ("productId")
-          JOIN colors as "c" USING ("colorId")
+          JOIN colors AS "c" USING ("colorId")
           JOIN products_images USING ("productId")
-          JOIN images as "i" USING ("imageId")
+          JOIN images AS "i" USING ("imageId")
         WHERE "productId" = $1
         GROUP BY "productId"
       ;`;
@@ -97,8 +97,8 @@ app.get('/api/cart', (req, res, next) => {
             "p"."chosenColor",
             "p"."name",
             "p"."shortDescription"
-        FROM cartItems as "c"
-        JOIN products as "p" USING ("productId")
+        FROM cartItems AS "c"
+        JOIN products AS "p" USING ("productId")
        WHERE "c"."cartId" = $1
     `;
   const { cartId } = req.session;
@@ -111,7 +111,7 @@ app.get('/api/cart', (req, res, next) => {
 });
 
 app.post('/api/cart', (req, res, next) => {
-  const { productId, color } = req.body;
+  const { productId, chosenColor } = req.body;
   if (!parseInt(productId, 10)) {
     return res.status(400).json({
       error: '"productId" must be a positive integer'
@@ -154,7 +154,7 @@ app.post('/api/cart', (req, res, next) => {
         VALUES ($1, $2, $3, $4)
         RETURNING "cartItemId";
       `;
-      const params = [cartId, productId, price, color];
+      const params = [cartId, productId, price, chosenColor];
       return (
         db.query(sql, params)
           .then(result => {

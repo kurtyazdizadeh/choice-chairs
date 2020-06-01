@@ -21,6 +21,8 @@ export default class App extends React.Component {
       .then(data => this.setState({ message: data.message || data.error }))
       .catch(err => this.setState({ message: err.message }))
       .finally(() => this.setState({ isLoading: false }));
+
+    this.getCartItems();
   }
 
   addToCart(product) {
@@ -42,6 +44,15 @@ export default class App extends React.Component {
       .catch(err => console.error(err));
   }
 
+  getCartItems() {
+    fetch('/api/cart')
+      .then(res => res.json())
+      .then(cartItems => {
+        this.setState({ cart: cartItems });
+      })
+      .catch(err => console.error(err));
+  }
+
   render() {
     // return this.state.isLoading
     //   ? <h1>Testing connections...</h1>
@@ -58,6 +69,7 @@ export default class App extends React.Component {
                     <Route path="/details/:productId"
                       render={props =>
                         <ProductDetails {...props}
+                          addToCart={this.addToCart}
                         />}
                     />
                     <Route path="/"
