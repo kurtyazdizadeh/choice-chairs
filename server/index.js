@@ -90,21 +90,37 @@ app.get('/api/cart', (req, res, next) => {
   if (!req.session.cartId) {
     return res.json([]);
   }
+  // const sql = `
+  //    SELECT "c"."cartItemId",
+  //           "c"."price",
+  //           "p"."productId",
+  //           "p"."chosenColor",
+  //           "p"."name",
+  //           "p"."shortDescription"
+  //       FROM cartItems AS "c"
+  //       JOIN products AS "p" USING ("productId")
+  //      WHERE "c"."cartId" = $1
+  //   `;
   const sql = `
-     SELECT "c"."cartItemId",
-            "c"."price",
-            "p"."productId",
-            "p"."chosenColor",
-            "p"."name",
-            "p"."shortDescription"
-        FROM cartItems AS "c"
-        JOIN products AS "p" USING ("productId")
-       WHERE "c"."cartId" = $1
-    `;
+   SELECT "ci"."color",
+          "p"."productId",
+          "p"."name",
+          "p"."price",
+          "p"."shortDescription",
+          "c"."cartId",
+          COUNT("ci"."color") as "count"
+    FROM  cartItems AS "ci"
+    JOIN  products AS "p" USING ("productId")
+    JOIN  carts AS "c" USING ("cartId")
+   WHERE  "c"."cartId" = $1
+GROUP BY  "ci"."color", "p"."productId", "c"."cartId"
+ORDER BY  "p"."productId" ASC;
+`;
   const { cartId } = req.session;
   const params = [cartId];
   db.query(sql, params)
     .then(result => {
+      console.log(result.rows);
       res.json(result.rows);
     })
     .catch(err => next(err));

@@ -17,6 +17,10 @@ class ProductDetails extends React.Component {
     this.loadProductComponent();
   }
 
+  componentWillUnmount() {
+    this.setState({ product: null });
+  }
+
   loadProductComponent() {
     const { productId } = this.props.match.params;
     const searchQuery = new URLSearchParams(this.props.location.search);
