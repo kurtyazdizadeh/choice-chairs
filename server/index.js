@@ -120,7 +120,6 @@ ORDER BY  "p"."productId" ASC;
   const params = [cartId];
   db.query(sql, params)
     .then(result => {
-      console.log(result.rows);
       res.json(result.rows);
     })
     .catch(err => next(err));

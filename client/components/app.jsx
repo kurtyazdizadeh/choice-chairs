@@ -69,15 +69,17 @@ export default class App extends React.Component {
     //   : <h1>{this.state.message}</h1>;
     const { cart } = this.state;
     let orderTotal = 0;
+    let numOfCartItems = 0;
     if (cart.length) {
-      orderTotal = cart.reduce((a, b) => ({ price: a.price + b.price }), { price: 0 });
+      orderTotal = cart.reduce((a, b) => ({ price: a.price + (b.price * parseInt(b.count)) }), { price: 0 });
       orderTotal = (orderTotal.price / 100).toFixed(2);
+      numOfCartItems = cart.reduce((a, b) => (a + parseInt(b.count)), 0);
     }
     return (
       <>
         <Router>
           <div className="bg-light">
-            <Header cartItemCount={cart.length} />
+            <Header cartItemCount={numOfCartItems} />
             <div className="mt-4 py-5">
               <div className="products">
                 <div className="row justify-content-center mx-1">
