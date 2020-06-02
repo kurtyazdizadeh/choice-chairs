@@ -21,7 +21,7 @@ class CartSummaryItem extends React.Component {
         <i
           className="fa fa-trash text-danger text-right pointer"
           onClick={() => {
-            this.props.deleteAllFromCart(cartId, productId);
+            this.props.deleteAllFromCart(cartId, productId, color);
           }}
         >
         </i>

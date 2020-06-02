@@ -197,13 +197,13 @@ app.post('/api/cart', (req, res, next) => {
 });
 
 app.delete('/api/cart/:cartItemId', (req, res, next) => {
-  const { cartItemId, cartId } = req.params;
+  const { cartItemId } = req.params;
   const sql = `
     DELETE FROM cartItems
           WHERE "cartItemId" = $1
       RETURNING *;
   `;
-  const params = [cartItemId, cartItem];
+  const params = [cartItemId];
   db.query(sql, params)
     .then(result => {
       const deletedItem = result.rows[0];
@@ -212,20 +212,46 @@ app.delete('/api/cart/:cartItemId', (req, res, next) => {
     .catch(err => console.error(err));
 });
 
-app.delete('/api/cart/all/:cartId-:productId', (req, res, next) => {
-  const { cartId, productId } = req.params;
+app.delete('/api/cart/all/:cartId-:productId-:color', (req, res, next) => {
+  const { cartId, productId, color } = req.params;
   const sql = `
     DELETE FROM cartItems
-          WHERE "cartId" = $1 AND "productId" = $2
+          WHERE "cartId" = $1 AND "productId" = $2 AND "color" = $3
       RETURNING *;
   `;
-  const params = [cartId, productId];
+  const params = [cartId, productId, color];
   db.query(sql, params)
     .then(result => {
       const deletedItems = result.rows;
       res.status(200).json(deletedItems);
     })
     .catch(err => console.error(err));
+});
+
+app.post('/api/orders', (req, res, next) => {
+  const { cartId } = req.session;
+  if (!cartId) {
+    return res.status(400).json({
+      error: 'no cart found'
+    });
+  }
+  const { name, creditCard, shippingAddress } = req.body;
+  if (name && creditCard && shippingAddress) {
+    const sql = `
+       INSERT INTO
+            orders ("cartId", "name", "creditCard", "shippingAddress")
+            VALUES ($1, $2, $3, $4)
+         RETURNING *;
+    `;
+    const params = [cartId, name, creditCard, shippingAddress];
+    db.query(sql, params)
+      .then(result => {
+        delete req.session.cartId;
+        const order = result.rows[0];
+        res.status(201).json(order);
+      })
+      .catch(err => next(err));
+  }
 });
 
 app.use('/api', (req, res, next) => {
