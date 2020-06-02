@@ -13,7 +13,7 @@ class CartSummaryItem extends React.Component {
   }
 
   render() {
-    const { productId, cartItemIds, color, name, price, shortDescription } = this.props.item;
+    const { productId, cartId, cartItemIds, color, name, price, shortDescription } = this.props.item;
     const { count } = this.state;
 
     return (
@@ -21,8 +21,7 @@ class CartSummaryItem extends React.Component {
         <i
           className="fa fa-trash text-danger text-right pointer"
           onClick={() => {
-            this.props.deleteFromCart(cartItemIds.pop());
-            this.setState({ count: count - 1 });
+            this.props.deleteAllFromCart(cartId, productId);
           }}
         >
         </i>
@@ -36,12 +35,39 @@ class CartSummaryItem extends React.Component {
             <h4 className="font-weight-bold">{`${name} - ${color[0].toUpperCase() + color.slice(1)}`}</h4>
             <h5 className="text-secondary">${(price / 100).toFixed(2)} each</h5>
             <p>{shortDescription}</p>
-            {
-            /* change this to a - + button around count that will increment/decrement cart
-              could use input with value set to current count, onChange run update to recalc subtotal
-              also have plus/minus to change by 1
-            */}
-            <p>Count: {count}</p>
+            <div className="input-group mb-3 item-count">
+              <span className="input-group-btn">
+                <button
+                  type="button"
+                  className="btn btn-default btn-number"
+                  onClick={() => {
+                    this.props.deleteFromCart(cartItemIds.pop());
+                    this.setState({ count: count - 1 });
+                  }}
+                >
+                  <span className="fas fa-minus"></span>
+                </button>
+              </span>
+              <input
+                type="text"
+                className="form-control input-number text-center"
+                value={count}
+                disabled
+              >
+              </input>
+              <span className="input-group-btn">
+                <button
+                  type="button"
+                  className="btn btn-default btn-number"
+                  onClick={() => {
+                    this.props.addToCart({ productId, chosenColor: color });
+                    this.setState({ count: count + 1 });
+                  }}
+                >
+                  <span className="fas fa-plus"></span>
+                </button>
+              </span>
+            </div>
             <p><em>Subtotal: ${(price / 100).toFixed(2) * count}</em></p>
           </div>
         </div>

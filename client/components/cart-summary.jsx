@@ -10,6 +10,8 @@ class CartSummary extends React.Component {
         <CartSummaryItem
           key={`${productId}-${color}`}
           item={item}
+          addToCart={this.props.addToCart}
+          deleteAllFromCart={this.props.deleteAllFromCart}
           deleteFromCart={this.props.deleteFromCart}
         />
       );

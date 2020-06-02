@@ -69,3 +69,8 @@ html {
 ul {
   padding-left: 0;
 }
+
+.item-count {
+  width: calc(100%/3);
+  min-width: 145px;
+}

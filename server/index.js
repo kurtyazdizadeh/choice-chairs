@@ -90,17 +90,6 @@ app.get('/api/cart', (req, res, next) => {
   if (!req.session.cartId) {
     return res.json([]);
   }
-  // const sql = `
-  //    SELECT "c"."cartItemId",
-  //           "c"."price",
-  //           "p"."productId",
-  //           "p"."chosenColor",
-  //           "p"."name",
-  //           "p"."shortDescription"
-  //       FROM cartItems AS "c"
-  //       JOIN products AS "p" USING ("productId")
-  //      WHERE "c"."cartId" = $1
-  //   `;
   const sql = `
   SELECT "ci"."color",
          "p"."productId",
@@ -208,17 +197,33 @@ app.post('/api/cart', (req, res, next) => {
 });
 
 app.delete('/api/cart/:cartItemId', (req, res, next) => {
-  const { cartItemId } = req.params;
+  const { cartItemId, cartId } = req.params;
   const sql = `
     DELETE FROM cartItems
           WHERE "cartItemId" = $1
       RETURNING *;
   `;
-  const params = [cartItemId];
+  const params = [cartItemId, cartItem];
   db.query(sql, params)
     .then(result => {
       const deletedItem = result.rows[0];
       res.status(200).json(deletedItem);
+    })
+    .catch(err => console.error(err));
+});
+
+app.delete('/api/cart/all/:cartId-:productId', (req, res, next) => {
+  const { cartId, productId } = req.params;
+  const sql = `
+    DELETE FROM cartItems
+          WHERE "cartId" = $1 AND "productId" = $2
+      RETURNING *;
+  `;
+  const params = [cartId, productId];
+  db.query(sql, params)
+    .then(result => {
+      const deletedItems = result.rows;
+      res.status(200).json(deletedItems);
     })
     .catch(err => console.error(err));
 });

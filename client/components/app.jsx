@@ -15,6 +15,7 @@ export default class App extends React.Component {
     };
     this.addToCart = this.addToCart.bind(this);
     this.deleteFromCart = this.deleteFromCart.bind(this);
+    this.deleteAllFromCart = this.deleteAllFromCart.bind(this);
   }
 
   componentDidMount() {
@@ -60,6 +61,13 @@ export default class App extends React.Component {
       .catch(err => console.error(err));
   }
 
+  deleteAllFromCart(cartId, productId) {
+    fetch(`/api/cart/all/${cartId}-${productId}`, { method: 'DELETE' })
+      .then(result => result.json())
+      .then(data => this.getCartItems())
+      .catch(err => console.error(err));
+  }
+
   render() {
     // return this.state.isLoading
     //   ? <h1>Testing connections...</h1>
@@ -91,6 +99,8 @@ export default class App extends React.Component {
                       render={props =>
                         <CartSummary {...props}
                           cart={cart}
+                          addToCart={this.addToCart}
+                          deleteAllFromCart={this.deleteAllFromCart}
                           deleteFromCart={this.deleteFromCart}
                           orderTotal={orderTotal}
                         />}
