@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Header from './header';
 import ProductList from './product-list';
 import ProductDetails from './product-details';
+import CartSummary from './cart-summary';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -13,6 +14,8 @@ export default class App extends React.Component {
       cart: []
     };
     this.addToCart = this.addToCart.bind(this);
+    this.deleteFromCart = this.deleteFromCart.bind(this);
+    this.deleteAllFromCart = this.deleteAllFromCart.bind(this);
   }
 
   componentDidMount() {
@@ -36,10 +39,8 @@ export default class App extends React.Component {
 
     fetch('/api/cart', fetchConfig)
       .then(res => res.json())
-      .then(product => {
-        const cartCopy = [...this.state.cart];
-        cartCopy.push(product);
-        this.setState({ cart: cartCopy });
+      .then(newCart => {
+        this.setState({ cart: newCart });
       })
       .catch(err => console.error(err));
   }
@@ -53,15 +54,37 @@ export default class App extends React.Component {
       .catch(err => console.error(err));
   }
 
+  deleteFromCart(cartItemId) {
+    fetch(`/api/cart/${cartItemId}`, { method: 'DELETE' })
+      .then(result => result.json())
+      .then(deletedItem => this.getCartItems())
+      .catch(err => console.error(err));
+  }
+
+  deleteAllFromCart(cartId, productId) {
+    fetch(`/api/cart/all/${cartId}-${productId}`, { method: 'DELETE' })
+      .then(result => result.json())
+      .then(data => this.getCartItems())
+      .catch(err => console.error(err));
+  }
+
   render() {
     // return this.state.isLoading
     //   ? <h1>Testing connections...</h1>
     //   : <h1>{this.state.message}</h1>;
+    const { cart } = this.state;
+    let orderTotal = 0;
+    let numOfCartItems = 0;
+    if (cart.length) {
+      orderTotal = cart.reduce((a, b) => ({ price: a.price + (b.price * b.cartItemIds.length) }), { price: 0 });
+      orderTotal = (orderTotal.price / 100).toFixed(2);
+      numOfCartItems = cart.reduce((a, b) => (a + b.cartItemIds.length), 0);
+    }
     return (
       <>
         <Router>
           <div className="bg-light">
-            <Header cartItemCount={this.state.cart.length} />
+            <Header cartItemCount={numOfCartItems} />
             <div className="mt-4 py-5">
               <div className="products">
                 <div className="row justify-content-center mx-1">
@@ -70,6 +93,16 @@ export default class App extends React.Component {
                       render={props =>
                         <ProductDetails {...props}
                           addToCart={this.addToCart}
+                        />}
+                    />
+                    <Route path="/cart"
+                      render={props =>
+                        <CartSummary {...props}
+                          cart={cart}
+                          addToCart={this.addToCart}
+                          deleteAllFromCart={this.deleteAllFromCart}
+                          deleteFromCart={this.deleteFromCart}
+                          orderTotal={orderTotal}
                         />}
                     />
                     <Route path="/"

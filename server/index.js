@@ -91,16 +91,20 @@ app.get('/api/cart', (req, res, next) => {
     return res.json([]);
   }
   const sql = `
-     SELECT "c"."cartItemId",
-            "c"."price",
-            "p"."productId",
-            "p"."chosenColor",
-            "p"."name",
-            "p"."shortDescription"
-        FROM cartItems AS "c"
-        JOIN products AS "p" USING ("productId")
-       WHERE "c"."cartId" = $1
-    `;
+  SELECT "ci"."color",
+         "p"."productId",
+         "p"."name",
+         "p"."price",
+         "p"."shortDescription",
+         "c"."cartId",
+         ARRAY_AGG("ci"."cartItemId") AS "cartItemIds"
+    FROM cartItems AS "ci"
+      JOIN products AS "p" USING ("productId")
+      JOIN carts AS "c" USING ("cartId")
+   WHERE "c"."cartId" = $1
+  GROUP BY "ci"."color", "p"."productId", "c"."cartId"
+  ORDER BY "p"."productId" ASC;
+`;
   const { cartId } = req.session;
   const params = [cartId];
   db.query(sql, params)
@@ -152,39 +156,76 @@ app.post('/api/cart', (req, res, next) => {
       const sql = `
         INSERT INTO cartItems ("cartId", "productId", "price", "color")
         VALUES ($1, $2, $3, $4)
-        RETURNING "cartItemId";
+        RETURNING "cartId";
       `;
       const params = [cartId, productId, price, chosenColor];
       return (
         db.query(sql, params)
           .then(result => {
-            const { cartItemId } = result.rows[0];
-            return cartItemId;
+            const { cartId } = result.rows[0];
+            return cartId;
           })
       );
     })
-    .then(cartItemId => {
+    .then(cartId => {
       const sql = `
-        SELECT "c"."cartItemId",
-                "c"."price",
-                "p"."productId",
-                "p"."chosenColor",
-                "p"."name",
-                "p"."shortDescription"
-           FROM cartItems AS "c"
-           JOIN products AS "p" USING ("productId")
-          WHERE "c"."cartItemId" = $1
+      SELECT "ci"."color",
+             "p"."price",
+             "p"."productId",
+             "p"."name",
+             "p"."shortDescription",
+             "c"."cartId",
+            ARRAY_AGG("ci"."cartItemId") AS "cartItemIds"
+        FROM cartItems AS "ci"
+          JOIN products AS "p" USING("productId")
+          JOIN carts AS "c" USING("cartId")
+        WHERE "c"."cartId" = $1
+      GROUP BY "ci"."color", "p"."productId", "c"."cartId"
+      ORDER BY "p"."productId" ASC;
       `;
-      const params = [cartItemId];
+
+      const params = [cartId];
       return (
         db.query(sql, params)
           .then(result => {
-            const cartItem = result.rows[0];
-            res.status(201).json(cartItem);
+            const updatedCart = result.rows;
+            res.status(201).json(updatedCart);
           })
       );
     })
     .catch(err => next(err));
+});
+
+app.delete('/api/cart/:cartItemId', (req, res, next) => {
+  const { cartItemId, cartId } = req.params;
+  const sql = `
+    DELETE FROM cartItems
+          WHERE "cartItemId" = $1
+      RETURNING *;
+  `;
+  const params = [cartItemId, cartItem];
+  db.query(sql, params)
+    .then(result => {
+      const deletedItem = result.rows[0];
+      res.status(200).json(deletedItem);
+    })
+    .catch(err => console.error(err));
+});
+
+app.delete('/api/cart/all/:cartId-:productId', (req, res, next) => {
+  const { cartId, productId } = req.params;
+  const sql = `
+    DELETE FROM cartItems
+          WHERE "cartId" = $1 AND "productId" = $2
+      RETURNING *;
+  `;
+  const params = [cartId, productId];
+  db.query(sql, params)
+    .then(result => {
+      const deletedItems = result.rows;
+      res.status(200).json(deletedItems);
+    })
+    .catch(err => console.error(err));
 });
 
 app.use('/api', (req, res, next) => {
