@@ -4,10 +4,11 @@ import CartSummaryItem from './cart-summary-item';
 class CartSummary extends React.Component {
 
   renderSummaryItems() {
-    const itemElements = this.props.cart.map((item, index) => {
+    const itemElements = this.props.cart.map(item => {
+      const { productId, color } = item;
       return (
         <CartSummaryItem
-          key={index}
+          key={`${productId}-${color}`}
           item={item}
           deleteFromCart={this.props.deleteFromCart}
         />

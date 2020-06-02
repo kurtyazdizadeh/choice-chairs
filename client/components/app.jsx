@@ -38,10 +38,8 @@ export default class App extends React.Component {
 
     fetch('/api/cart', fetchConfig)
       .then(res => res.json())
-      .then(product => {
-        const cartCopy = [...this.state.cart];
-        cartCopy.push(product);
-        this.setState({ cart: cartCopy });
+      .then(newCart => {
+        this.setState({ cart: newCart });
       })
       .catch(err => console.error(err));
   }
@@ -56,11 +54,10 @@ export default class App extends React.Component {
   }
 
   deleteFromCart(cartItemId) {
-    console.log('app.jsx delete method fired!', cartItemId);
-    // fetch('/api/car/:id', { method: 'DELETE' })
-    //   .then(result => result.json())
-    //   .then()
-    //   .catch(err => console.error(err))
+    fetch(`/api/cart/${cartItemId}`, { method: 'DELETE' })
+      .then(result => result.json())
+      .then(deletedItem => this.getCartItems())
+      .catch(err => console.error(err));
   }
 
   render() {
@@ -71,9 +68,9 @@ export default class App extends React.Component {
     let orderTotal = 0;
     let numOfCartItems = 0;
     if (cart.length) {
-      orderTotal = cart.reduce((a, b) => ({ price: a.price + (b.price * parseInt(b.count)) }), { price: 0 });
+      orderTotal = cart.reduce((a, b) => ({ price: a.price + (b.price * b.cartItemIds.length) }), { price: 0 });
       orderTotal = (orderTotal.price / 100).toFixed(2);
-      numOfCartItems = cart.reduce((a, b) => (a + parseInt(b.count)), 0);
+      numOfCartItems = cart.reduce((a, b) => (a + b.cartItemIds.length), 0);
     }
     return (
       <>

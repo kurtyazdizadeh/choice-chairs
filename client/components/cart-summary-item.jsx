@@ -1,14 +1,28 @@
 import React from 'react';
 
 class CartSummaryItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0
+    };
+  }
+
+  componentDidMount() {
+    this.setState({ count: this.props.item.cartItemIds.length });
+  }
+
   render() {
-    const { productId, cartItemId, color, count, name, price, shortDescription } = this.props.item;
+    const { productId, cartItemIds, color, name, price, shortDescription } = this.props.item;
+    const { count } = this.state;
+
     return (
       <div className="card p-3 my-3 mx-auto">
         <i
           className="fa fa-trash text-danger text-right pointer"
           onClick={() => {
-            this.props.deleteFromCart(cartItemId);
+            this.props.deleteFromCart(cartItemIds.pop());
+            this.setState({ count: count - 1 });
           }}
         >
         </i>
