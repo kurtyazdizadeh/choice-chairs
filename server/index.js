@@ -197,13 +197,13 @@ app.post('/api/cart', (req, res, next) => {
 });
 
 app.delete('/api/cart/:cartItemId', (req, res, next) => {
-  const { cartItemId, cartId } = req.params;
+  const { cartItemId } = req.params;
   const sql = `
     DELETE FROM cartItems
           WHERE "cartItemId" = $1
       RETURNING *;
   `;
-  const params = [cartItemId, cartItem];
+  const params = [cartItemId];
   db.query(sql, params)
     .then(result => {
       const deletedItem = result.rows[0];
