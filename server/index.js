@@ -228,6 +228,32 @@ app.delete('/api/cart/all/:cartId-:productId-:color', (req, res, next) => {
     .catch(err => console.error(err));
 });
 
+app.post('/api/orders', (req, res, next) => {
+  const { cartId } = req.session;
+  if (!cartId) {
+    return res.status(400).json({
+      error: 'no cart found'
+    });
+  }
+  const { name, creditCard, shippingAddress } = req.body;
+  if (name && creditCard && shippingAddress) {
+    const sql = `
+       INSERT INTO
+            orders ("cartId", "name", "creditCard", "shippingAddress")
+            VALUES ($1, $2, $3, $4)
+         RETURNING *;
+    `;
+    const params = [cartId, name, creditCard, shippingAddress];
+    db.query(sql, params)
+      .then(result => {
+        delete req.session.cartId;
+        const order = result.rows[0];
+        res.status(201).json(order);
+      })
+      .catch(err => next(err));
+  }
+});
+
 app.use('/api', (req, res, next) => {
   next(new ClientError(`cannot ${req.method} ${req.originalUrl}`, 404));
 });
