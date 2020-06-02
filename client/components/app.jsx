@@ -61,8 +61,8 @@ export default class App extends React.Component {
       .catch(err => console.error(err));
   }
 
-  deleteAllFromCart(cartId, productId) {
-    fetch(`/api/cart/all/${cartId}-${productId}`, { method: 'DELETE' })
+  deleteAllFromCart(cartId, productId, color) {
+    fetch(`/api/cart/all/${cartId}-${productId}-${color}`, { method: 'DELETE' })
       .then(result => result.json())
       .then(data => this.getCartItems())
       .catch(err => console.error(err));

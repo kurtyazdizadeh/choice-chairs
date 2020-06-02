@@ -212,14 +212,14 @@ app.delete('/api/cart/:cartItemId', (req, res, next) => {
     .catch(err => console.error(err));
 });
 
-app.delete('/api/cart/all/:cartId-:productId', (req, res, next) => {
-  const { cartId, productId } = req.params;
+app.delete('/api/cart/all/:cartId-:productId-:color', (req, res, next) => {
+  const { cartId, productId, color } = req.params;
   const sql = `
     DELETE FROM cartItems
-          WHERE "cartId" = $1 AND "productId" = $2
+          WHERE "cartId" = $1 AND "productId" = $2 AND "color" = $3
       RETURNING *;
   `;
-  const params = [cartId, productId];
+  const params = [cartId, productId, color];
   db.query(sql, params)
     .then(result => {
       const deletedItems = result.rows;
