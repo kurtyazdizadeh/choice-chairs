@@ -63,10 +63,10 @@ class ProductList extends React.Component {
     }
     return (
       <>
-        <div className="row col-12 hero-image position-relative">
+        <div className="row col-12 mb-2 hero-image position-relative">
           <span className="hero-text text-light position-absolute">
-            When you make the right CHOICE<br/>
-            &emsp; you have the best seat in the house!
+            &emsp; When you make the right CHOICE<br/>
+            you have the best seat in the house!
           </span>
         </div>
         {products}

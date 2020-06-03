@@ -12,7 +12,7 @@
   background-repeat: no-repeat;
   min-height: 94vh;
   height: 100%;
-  background-color:black;
+  background-color: steelblue;
 }
 
 .products {
@@ -48,6 +48,7 @@
 }
 .product-item {
   position: relative;
+  padding-bottom: 10px;
 }
 .product-item img.top {
   position: absolute;
@@ -103,6 +104,12 @@ ul {
   min-width: 145px;
 }
 
+.cart-items {
+  height: 175px;
+  font-size: .75rem;
+  border: 1px solid #CED4DA;
+}
+
 @media screen and (max-width: 1190px) {
   .hero-image {
     background-position-x: -150px;
@@ -115,7 +122,10 @@ ul {
   .hero-image {
     display: none!important;
   }
-  nav h3 {
-    font-size: 1.5rem;
+  .cart-items-container {
+    display: none!important;
   }
+  /* nav h3 {
+    font-size: 1.5rem;
+  } */
 }

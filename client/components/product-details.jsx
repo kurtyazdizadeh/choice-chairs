@@ -47,10 +47,10 @@ class ProductDetails extends React.Component {
     if (this.state.product) {
       const { productId, name, images, colors, chosenColor, price, shortDescription, longDescription } = this.state.product;
       return (
-        <div className="card bg-secondary h-100 col-10 col-md-8 d-flex flex-column m-3">
+        <div className="card h-100 col-10 col-md-8 d-flex flex-column m-3">
           <div className="row p-3">
             <h4
-              className="text-white pointer"
+              className="text-secondary pointer"
               onClick={() => {
                 this.props.history.push('/');
               }}
@@ -60,9 +60,9 @@ class ProductDetails extends React.Component {
           </div>
           <div className="row">
             <Gallery color={chosenColor} images={images} productId={productId} />
-            <div className="product-info text-white d-flex flex-column col-12 col-md-6">
+            <div className="product-info d-flex flex-column col-12 col-md-6">
               <h2 className="font-weight-bold">{name}</h2>
-              <h3 className="text-white">${(price / 100).toFixed(2)}</h3>
+              <h3 className="text-secondary">${(price / 100).toFixed(2)}</h3>
               <h6>Colors:</h6>
               <div>
                 {
@@ -92,7 +92,7 @@ class ProductDetails extends React.Component {
               </button>
             </div>
           </div>
-          <div className="row text-white p-3">
+          <div className="row p-3">
             {longDescription}
           </div>
         </div>

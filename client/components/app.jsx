@@ -109,6 +109,7 @@ export default class App extends React.Component {
                     render={props =>
                       <CheckoutForm {...props}
                         orderTotal={orderTotal}
+                        cart={cart}
                       />}
                   />
                   <Route path="/"
