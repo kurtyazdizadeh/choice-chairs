@@ -28,7 +28,16 @@ class ProductList extends React.Component {
 
   renderListItems() {
     const listItemElements = this.state.products.map(product => {
-      const { productId, name, price, chosenColor, colors, images, shortDescription, longDescription } = product;
+      const {
+        productId,
+        name,
+        price,
+        chosenColor,
+        colors,
+        images,
+        shortDescription,
+        longDescription
+      } = product;
       return (
         <ProductListItem
           key={productId}
@@ -47,10 +56,21 @@ class ProductList extends React.Component {
   }
 
   render() {
+    let products = this.renderListItems();
+
+    if (!this.state.products.length) {
+      products = <div>Loading...</div>;
+    }
     return (
-      this.state.products.length
-        ? this.renderListItems()
-        : <div>Loading...</div>
+      <>
+        <div className="row col-12 hero-image position-relative">
+          <span className="hero-text text-light position-absolute">
+            When you make the right CHOICE<br/>
+            &emsp; you have the best seat in the house!
+          </span>
+        </div>
+        {products}
+      </>
     );
   }
 }

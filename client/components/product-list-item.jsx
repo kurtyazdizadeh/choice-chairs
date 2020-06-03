@@ -6,7 +6,7 @@ class ProductListItem extends React.Component {
     const { name, price, desc, images, colorOptions, productId } = this.props;
     return (
       <div
-        className="card product-item m-2 col-11 col-md-5 col-lg-3"
+        className="card product-item bg-secondary text-light m-2 col-10 col-md-5 col-lg-3"
       >
         <div className="card-image pointer"
           onClick={() => {
@@ -28,7 +28,7 @@ class ProductListItem extends React.Component {
           <div className="d-flex">
             <div className="mr-auto">
               <h5 className="card-title font-weight-bold">{name}</h5>
-              <h6 className="text-secondary">${price}</h6>
+              <h6 className="text-white">${price}</h6>
             </div>
             <div>
               <h6 className="my-1">Colors:</h6>
@@ -37,7 +37,7 @@ class ProductListItem extends React.Component {
                   return (
                     <div
                       key={index}
-                      className={`${color} color ml-0 pointer`}
+                      className={`${color} color ml-0 mr-2 pointer`}
                       onClick={() => {
                         this.props.history.push(`/details/${productId}?color=${color}`);
                       }}

@@ -24,14 +24,14 @@ class CartSummary extends React.Component {
   render() {
     const { orderTotal } = this.props;
     return (
-      <div className="container">
+      <div className="container-fluid m-2 p-2 bg-light h-100">
         <h4
           className="text-secondary pointer"
           onClick={() => {
             this.props.history.push('/');
           }}
         >
-          &lt; Back to Catalog
+          <i className="fas fa-arrow-alt-circle-left"></i>&nbsp; Back to Catalog
         </h4>
         <h2>My Cart</h2>
         {this.renderSummaryItems()}
