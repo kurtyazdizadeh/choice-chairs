@@ -24,19 +24,19 @@ class CartSummary extends React.Component {
   render() {
     const { orderTotal } = this.props;
     return (
-      <div className="container">
+      <div className="container m-2 p-2 bg-light h-100">
         <h4
           className="text-secondary pointer"
           onClick={() => {
             this.props.history.push('/');
           }}
         >
-          &lt; Back to Catalog
+          <i className="fas fa-arrow-alt-circle-left"></i>&nbsp; Back to Catalog
         </h4>
         <h2>My Cart</h2>
         {this.renderSummaryItems()}
         <div className="p-0 d-flex justify-content-between">
-          <h5 className="text-secondary mr-1">
+          <h5 className="mr-1">
             {orderTotal ? `Order Total: $${orderTotal}` : ''}
           </h5>
           {orderTotal
@@ -47,7 +47,7 @@ class CartSummary extends React.Component {
                 this.props.history.push('/checkout');
               }}
             >
-              Checkout
+                Checkout
             </button>
             : <button
               className="btn btn-primary"
@@ -56,7 +56,7 @@ class CartSummary extends React.Component {
                 this.props.history.push('/');
               }}
             >
-              Go Back
+                Go Back
             </button>
           }
         </div>

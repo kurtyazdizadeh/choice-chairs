@@ -47,7 +47,7 @@ class ProductDetails extends React.Component {
     if (this.state.product) {
       const { productId, name, images, colors, chosenColor, price, shortDescription, longDescription } = this.state.product;
       return (
-        <div className="card col-11 col-md-8 d-flex flex-column m-3">
+        <div className="card h-100 col-10 col-md-8 d-flex flex-column m-3">
           <div className="row p-3">
             <h4
               className="text-secondary pointer"
@@ -55,7 +55,7 @@ class ProductDetails extends React.Component {
                 this.props.history.push('/');
               }}
             >
-              &lt; Back to Catalog
+              <i className="fas fa-arrow-alt-circle-left"></i>&nbsp; Back to Catalog
             </h4>
           </div>
           <div className="row">
@@ -70,7 +70,7 @@ class ProductDetails extends React.Component {
                     return (
                       <div
                         key={index}
-                        className={`${color} color ml-0 pointer`}
+                        className={`${color} color ml-0 mr-2 pointer`}
                         onClick={() => {
                           this.props.history.push(`/details/${productId}?color=${color}`);
                           this.getProductDetails(productId, color);

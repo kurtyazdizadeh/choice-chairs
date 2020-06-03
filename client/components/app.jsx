@@ -4,6 +4,7 @@ import Header from './header';
 import ProductList from './product-list';
 import ProductDetails from './product-details';
 import CartSummary from './cart-summary';
+import CheckoutForm from './checkout-form';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -83,39 +84,44 @@ export default class App extends React.Component {
     return (
       <>
         <Router>
-          <div className="bg-light">
-            <Header cartItemCount={numOfCartItems} />
-            <div className="mt-4 py-5">
-              <div className="products">
-                <div className="row justify-content-center mx-1">
-                  <Switch>
-                    <Route path="/details/:productId"
-                      render={props =>
-                        <ProductDetails {...props}
-                          addToCart={this.addToCart}
-                        />}
-                    />
-                    <Route path="/cart"
-                      render={props =>
-                        <CartSummary {...props}
-                          cart={cart}
-                          addToCart={this.addToCart}
-                          deleteAllFromCart={this.deleteAllFromCart}
-                          deleteFromCart={this.deleteFromCart}
-                          orderTotal={orderTotal}
-                        />}
-                    />
-                    <Route path="/"
-                      render={props =>
-                        <ProductList {...props}
-                        />}
-                    />
-                  </Switch>
+          <Header cartItemCount={numOfCartItems} />
+          <main>
+            <div className="products container-fluid">
+              <div className="background row justify-content-center">
+                <Switch>
+                  <Route path="/details/:productId"
+                    render={props =>
+                      <ProductDetails {...props}
+                        addToCart={this.addToCart}
+                      />}
+                  />
+                  <Route path="/cart"
+                    render={props =>
+                      <CartSummary {...props}
+                        cart={cart}
+                        addToCart={this.addToCart}
+                        deleteAllFromCart={this.deleteAllFromCart}
+                        deleteFromCart={this.deleteFromCart}
+                        orderTotal={orderTotal}
+                      />}
+                  />
+                  <Route path="/checkout"
+                    render={props =>
+                      <CheckoutForm {...props}
+                        orderTotal={orderTotal}
+                        cart={cart}
+                      />}
+                  />
+                  <Route path="/"
+                    render={props =>
+                      <ProductList {...props}
+                      />}
+                  />
+                </Switch>
 
-                </div>
               </div>
             </div>
-          </div>
+          </main>
         </Router>
       </>
     );

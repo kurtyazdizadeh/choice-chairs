@@ -68,7 +68,7 @@ class CartSummaryItem extends React.Component {
                 </button>
               </span>
             </div>
-            <p><em>Subtotal: ${(price / 100).toFixed(2) * count}</em></p>
+            <p className="text-secondary"><em>Subtotal: ${(price / 100).toFixed(2) * count}</em></p>
           </div>
         </div>
       </div>
