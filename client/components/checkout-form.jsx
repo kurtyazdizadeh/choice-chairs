@@ -65,7 +65,7 @@ class CheckoutForm extends React.Component {
             <img className="scale img-fluid" src={`./images/${productId}/${color}-default.webp`} alt={`${name}-${color}`} />
           </div>
           <div>
-            <p>{`${name[0].toUpperCase() + name.slice(1)} - ${color}`}</p>
+            <p>{`${name[0].toUpperCase() + name.slice(1)} - ${color[0].toUpperCase() + color.slice(1)}`}</p>
             <p>Quantity: {cartItemIds.length}</p>
             <p>Subtotal: ${((price * cartItemIds.length) / 100).toFixed(2)}</p>
           </div>
