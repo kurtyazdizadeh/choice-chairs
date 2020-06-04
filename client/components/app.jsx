@@ -17,6 +17,7 @@ export default class App extends React.Component {
     this.addToCart = this.addToCart.bind(this);
     this.deleteFromCart = this.deleteFromCart.bind(this);
     this.deleteAllFromCart = this.deleteAllFromCart.bind(this);
+    this.placeOrder = this.placeOrder.bind(this);
   }
 
   componentDidMount() {
@@ -69,6 +70,29 @@ export default class App extends React.Component {
       .catch(err => console.error(err));
   }
 
+  placeOrder(order) {
+    const fetchConfig = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(order)
+    };
+    fetch('/api/orders', fetchConfig)
+      .then(res => res.json())
+      .then(processedOrder => {
+        this.setState({
+          view: {
+            name: 'catalog',
+            params: {}
+          },
+          cart: []
+        });
+      })
+      .catch(err => console.error(err));
+
+  }
+
   render() {
     // return this.state.isLoading
     //   ? <h1>Testing connections...</h1>
@@ -110,6 +134,7 @@ export default class App extends React.Component {
                       <CheckoutForm {...props}
                         orderTotal={orderTotal}
                         cart={cart}
+                        placeOrder={this.placeOrder}
                       />}
                   />
                   <Route path="/"

@@ -5,8 +5,13 @@ class CheckoutForm extends React.Component {
     super(props);
     this.state = {
       name: '',
+      email: '',
+      phone: '',
+      shippingAddress: '',
+      cardHolder: '',
       creditCard: '',
-      shippingAddress: ''
+      cvv: 0,
+      expirationDate: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -15,15 +20,32 @@ class CheckoutForm extends React.Component {
 
   handleChange(event) {
     const change = {};
-    switch (event.target.id) {
+    const { id, value } = event.target;
+
+    switch (id) {
       case 'name':
-        change.name = event.target.value;
+        change.name = value;
         break;
       case 'creditCard':
-        change.creditCard = event.target.value;
+        change.creditCard = value;
+        break;
+      case 'cvv':
+        change.cvv = value;
         break;
       case 'shippingAddress':
-        change.shippingAddress = event.target.value;
+        change.shippingAddress = value;
+        break;
+      case 'email':
+        change.email = value;
+        break;
+      case 'phone':
+        change.phone = value;
+        break;
+      case 'cardHolder':
+        change.cardHolder = value;
+        break;
+      case 'expirationDate':
+        change.expirationDate = value;
         break;
       default:
         break;
@@ -33,12 +55,26 @@ class CheckoutForm extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { name, creditCard, shippingAddress } = this.state;
+    const {
+      name,
+      email,
+      phone,
+      cardHolder,
+      creditCard,
+      cvv,
+      expirationDate,
+      shippingAddress
+    } = this.state;
 
     const order = {
-      name: name,
-      creditCard: creditCard,
-      shippingAddress: shippingAddress
+      name,
+      email,
+      phone,
+      cardHolder,
+      creditCard,
+      cvv,
+      expirationDate,
+      shippingAddress
     };
 
     this.props.placeOrder(order);
@@ -48,8 +84,13 @@ class CheckoutForm extends React.Component {
   resetForm() {
     this.setState({
       name: '',
+      email: '',
+      phone: '',
+      shippingAddress: '',
+      cardHolder: '',
       creditCard: '',
-      shippingAddress: ''
+      cvv: 0,
+      expirationDate: ''
     });
   }
 
@@ -81,14 +122,10 @@ class CheckoutForm extends React.Component {
       <div className="container m-3 p-2">
         <div className="row">
           <div className="h-100 p-3 col-12 col-md-7 bg-light rounded">
-            <h2>My Cart</h2>
-            <h4
-              className="text-secondary">
-              Order Total: ${this.props.orderTotal}
-            </h4>
             <form
               className="col"
               onSubmit={this.handleSubmit}>
+              <h4>Shipping Information</h4>
               <div className="form-group">
                 <label htmlFor="name">Name:</label>
                 <input
@@ -99,27 +136,140 @@ class CheckoutForm extends React.Component {
                   required
                   onChange={this.handleChange} />
               </div>
+              <div className="row">
+                <div className="form-group col-6">
+                  <label htmlFor="email">Email:</label>
+                  <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="phone">Phone Number:</label>
+                  <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+              </div>
               <div className="form-group">
-                <label htmlFor="creditCard">Credit Card:</label>
+                <label htmlFor="address1">Address:</label>
                 <input
                   type="text"
-                  id="creditCard"
-                  name="creditCard"
+                  id="address1"
+                  name="address1"
                   className="form-control"
                   required
+                  placeholder="123 Street Name St."
                   onChange={this.handleChange} />
               </div>
               <div className="form-group">
-                <label htmlFor="shippingAddress">Shipping Address:</label>
-                <textarea
-                  name="shippingAddress"
-                  id="shippingAddress"
-                  cols="30" rows="10"
+                <label htmlFor="address2">Address 2:</label>
+                <input
+                  type="text"
+                  id="address2"
+                  name="address2"
                   className="form-control"
                   required
-                  onChange={this.handleChange}>
-                </textarea>
+                  placeholder="Apt/Suite #, PO Box"
+                  onChange={this.handleChange} />
               </div>
+              <div className="row">
+                <div className="form-group col-6">
+                  <label htmlFor="city">City:</label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+                <div className="form-group col-3">
+                  <label htmlFor="state">State:</label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+                <div className="form-group col-3">
+                  <label htmlFor="zip">Zip:</label>
+                  <input
+                    type="text"
+                    id="zip"
+                    name="zip"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+              </div>
+              <hr/>
+              <h4>Billing Information</h4>
+              <div className="row">
+                <div className="form-group col-6">
+                  <label htmlFor="cardHolder">Name on Card:</label>
+                  <input
+                    type="text"
+                    id="cardHolder"
+                    name="cardHolder"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="creditCard">Credit Card:</label>
+                  <input
+                    type="text"
+                    id="creditCard"
+                    name="creditCard"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="form-group col-3">
+                  <label htmlFor="month">Month</label>
+                  <input
+                    type="text"
+                    id="month"
+                    name="month"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+                <div className="form-group col-3">
+                  <label htmlFor="year">Year:</label>
+                  <input
+                    type="text"
+                    id="year"
+                    name="year"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+                <div className="form-group col-3">
+                  <label htmlFor="cvv">CVV:</label>
+                  <input
+                    type="text"
+                    id="cvv"
+                    name="cvv"
+                    className="form-control"
+                    required
+                    onChange={this.handleChange} />
+                </div>
+              </div>
+              <hr/>
               <div className="form-group d-flex justify-content-between">
                 <h4
                   className="text-secondary pointer"
@@ -134,7 +284,12 @@ class CheckoutForm extends React.Component {
             </form>
           </div>
           <div className="cart-items-container col-md-4 bg-light mx-2 p-3 h-100 rounded">
+            <h2>My Cart</h2>
             {this.renderCartPreview()}
+            <h5
+              className="text-secondary">
+              Order Total: ${this.props.orderTotal}
+            </h5>
           </div>
 
         </div>
