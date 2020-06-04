@@ -1,4 +1,5 @@
 import React from 'react';
+import CheckoutPreview from './checkout-preview';
 
 class CheckoutForm extends React.Component {
   constructor(props) {
@@ -25,56 +26,13 @@ class CheckoutForm extends React.Component {
   }
 
   handleChange(event) {
-    const change = {};
     const { id, value } = event.target;
 
-    switch (id) {
-      case 'name':
-        change.name = value;
-        break;
-      case 'email':
-        change.email = value;
-        break;
-      case 'phone':
-        change.phone = value;
-        break;
-      case 'address1':
-        change.address1 = value;
-        break;
-      case 'address2':
-        change.address2 = value;
-        break;
-      case 'city':
-        change.city = value;
-        break;
-      case 'state':
-        change.state = value;
-        break;
-      case 'zip':
-        change.zip = value;
-        break;
-      case 'cardHolder':
-        change.cardHolder = value;
-        break;
-      case 'creditCard':
-        change.creditCard = value;
-        break;
-      case 'cvv':
-        change.cvv = value;
-        break;
-      case 'month':
-        change.month = value;
-        break;
-      case 'year':
-        change.year = value;
-        break;
-      case 'terms':
-        this.setState({ terms: !this.state.terms });
-        return;
-      default:
-        break;
+    if (id === 'terms') {
+      this.setState({ terms: !this.state.terms });
+      return;
     }
-    this.setState(change);
+    this.setState({ [id]: value });
   }
 
   handleSubmit(event) {
@@ -83,11 +41,17 @@ class CheckoutForm extends React.Component {
       name,
       email,
       phone,
+      address1,
+      address2,
+      city,
+      state,
+      zip,
       cardHolder,
       creditCard,
       cvv,
-      expirationDate,
-      shippingAddress
+      month,
+      year,
+      terms
     } = this.state;
 
     const order = {
@@ -96,9 +60,7 @@ class CheckoutForm extends React.Component {
       phone,
       cardHolder,
       creditCard,
-      cvv,
-      expirationDate,
-      shippingAddress
+      cvv
     };
 
     this.props.placeOrder(order);
@@ -116,29 +78,6 @@ class CheckoutForm extends React.Component {
       cvv: 0,
       expirationDate: ''
     });
-  }
-
-  renderCartPreview() {
-    const cartItems = this.props.cart.map(item => {
-      const { name, price, cartItemIds, productId, color } = item;
-      return (
-        <div
-          className="cart-items bg-white rounded mb-2 pl-0 py-2 pr-2 d-flex justify-content-around align-items-center"
-          key={`${productId}-${color}`}
-        >
-          <div className="w-50">
-            <img className="scale img-fluid" src={`./images/${productId}/${color}-default.webp`} alt={`${name}-${color}`} />
-          </div>
-          <div>
-            <p>{`${name[0].toUpperCase() + name.slice(1)} - ${color[0].toUpperCase() + color.slice(1)}`}</p>
-            <p>Quantity: {cartItemIds.length}</p>
-            <p>Subtotal: ${((price * cartItemIds.length) / 100).toFixed(2)}</p>
-          </div>
-        </div>
-      );
-    });
-
-    return cartItems;
   }
 
   render() {
@@ -278,13 +217,31 @@ class CheckoutForm extends React.Component {
                   </div>
                   <div className="form-group col-3">
                     <label htmlFor="year">Year:</label>
-                    <input
+                    <select
+                      id="year"
+                      name="year"
+                      className="form-control"
+                      onChange={this.handleChange}
+                    >
+                      <option>####</option>
+                      <option value="2020">2020</option>
+                      <option value="2021">2021</option>
+                      <option value="2022">2022</option>
+                      <option value="2023">2023</option>
+                      <option value="2024">2024</option>
+                      <option value="2025">2025</option>
+                      <option value="2026">2026</option>
+                      <option value="2027">2027</option>
+                      <option value="2028">2028</option>
+                      <option value="2029">2029</option>
+                    </select>
+                    {/* <input
                       type="text"
                       id="year"
                       name="year"
                       className="form-control"
                       required
-                      onChange={this.handleChange} />
+                      onChange={this.handleChange} /> */}
                   </div>
                   <div className="form-group col-3">
                     <label htmlFor="cvv">CVV:</label>
@@ -328,15 +285,10 @@ class CheckoutForm extends React.Component {
                 </div>
               </form>
             </div>
-            <div className="cart-items-container col-md-4 bg-light mx-2 p-3 h-100 rounded">
-              <h2>My Cart</h2>
-              {this.renderCartPreview()}
-              <h5
-                className="text-secondary">
-              Order Total: ${this.props.orderTotal}
-              </h5>
-            </div>
-
+            <CheckoutPreview
+              cart={this.props.cart}
+              orderTotal={this.props.orderTotal}
+            />
           </div>
         </div>
       </>
