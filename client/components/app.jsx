@@ -24,11 +24,11 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/api/health-check')
-      .then(res => res.json())
-      .then(data => this.setState({ message: data.message || data.error }))
-      .catch(err => this.setState({ message: err.message }))
-      .finally(() => this.setState({ isLoading: false }));
+    // fetch('/api/health-check')
+    //   .then(res => res.json())
+    //   .then(data => this.setState({ message: data.message || data.error }))
+    //   .catch(err => this.setState({ message: err.message }))
+    //   .finally(() => this.setState({ isLoading: false }));
 
     this.getCartItems();
   }
@@ -94,10 +94,10 @@ export default class App extends React.Component {
       .then(res => res.json())
       .then(processedOrder => {
         this.setState({
-          view: {
-            name: 'catalog',
-            params: {}
-          },
+          // view: {
+          //   name: 'catalog',
+          //   params: {}
+          // },
           cart: []
         });
       })
@@ -118,7 +118,7 @@ export default class App extends React.Component {
       <>
         <Router>
           <Header cartItemCount={numOfCartItems} />
-          <IntroModal modalClicked={this.modalClicked} />
+          {/* <IntroModal modalClicked={this.modalClicked} /> */}
           <main>
             <div className="products container-fluid">
               <div className="background row justify-content-center">
