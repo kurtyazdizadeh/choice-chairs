@@ -1,9 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
 
 * {
   margin: 0;
   box-sizing: border-box;
+  font-family: 'Source Code Pro', monospace;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+nav span,
+.hero-text {
   font-family: 'Audiowide', sans-serif;
+}
+nav {
+  font-family: 'Audiowide', sans-serif;
+  background-color: #001a6b;
 }
 
 .background {
@@ -28,7 +44,7 @@
 }
 .hero-text {
   top: 40%;
-  right: 5%;
+  right: 7%;
   font-size: 2rem;
 }
 
@@ -125,7 +141,11 @@ ul {
   .cart-items-container {
     display: none!important;
   }
-  /* nav h3 {
+  h1,h2,h3,h4,h5,h6 {
+    font-size: 1rem;
+  }
+  nav h3 {
     font-size: 1.5rem;
-  } */
+  }
+
 }

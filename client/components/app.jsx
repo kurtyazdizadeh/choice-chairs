@@ -5,6 +5,7 @@ import ProductList from './product-list';
 import ProductDetails from './product-details';
 import CartSummary from './cart-summary';
 import CheckoutForm from './checkout-form';
+import IntroModal from './modal';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -12,12 +13,14 @@ export default class App extends React.Component {
     this.state = {
       message: null,
       isLoading: true,
-      cart: []
+      cart: [],
+      modalClicked: false
     };
     this.addToCart = this.addToCart.bind(this);
     this.deleteFromCart = this.deleteFromCart.bind(this);
     this.deleteAllFromCart = this.deleteAllFromCart.bind(this);
     this.placeOrder = this.placeOrder.bind(this);
+    this.modalClicked = this.modalClicked.bind(this);
   }
 
   componentDidMount() {
@@ -28,6 +31,15 @@ export default class App extends React.Component {
       .finally(() => this.setState({ isLoading: false }));
 
     this.getCartItems();
+  }
+
+  modalClicked(modalType) {
+    if (modalType === 'intro') {
+      this.setState({ modalClicked: true });
+    }
+    if (modalType === 'checkout') {
+      this.setState({ checkoutModalClicked: true });
+    }
   }
 
   addToCart(product) {
@@ -94,9 +106,6 @@ export default class App extends React.Component {
   }
 
   render() {
-    // return this.state.isLoading
-    //   ? <h1>Testing connections...</h1>
-    //   : <h1>{this.state.message}</h1>;
     const { cart } = this.state;
     let orderTotal = 0;
     let numOfCartItems = 0;
@@ -109,6 +118,7 @@ export default class App extends React.Component {
       <>
         <Router>
           <Header cartItemCount={numOfCartItems} />
+          <IntroModal modalClicked={this.modalClicked} />
           <main>
             <div className="products container-fluid">
               <div className="background row justify-content-center">
