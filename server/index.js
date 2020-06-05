@@ -235,15 +235,31 @@ app.post('/api/orders', (req, res, next) => {
       error: 'no cart found'
     });
   }
-  const { name, creditCard, shippingAddress } = req.body;
-  if (name && creditCard && shippingAddress) {
+
+  const {
+    fullName,
+    email,
+    phone,
+    cardHolder,
+    creditCard,
+    expirationDate,
+    cvv,
+    shippingAddress
+  } = req.body;
+
+  if (fullName && email && phone && cardHolder &&
+      creditCard && expirationDate && cvv && shippingAddress) {
     const sql = `
-       INSERT INTO
-            orders ("cartId", "name", "creditCard", "shippingAddress")
-            VALUES ($1, $2, $3, $4)
-         RETURNING *;
-    `;
-    const params = [cartId, name, creditCard, shippingAddress];
+          INSERT INTO orders
+            ("cartId", "fullName", "email", "phone", "cardHolder",
+            "creditCard", "expirationDate", "cvv", "shippingAddress")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+          RETURNING *;
+        `;
+    const params = [
+      cartId, fullName, email, phone, cardHolder,
+      creditCard, expirationDate, cvv, shippingAddress
+    ];
     db.query(sql, params)
       .then(result => {
         delete req.session.cartId;
@@ -252,10 +268,6 @@ app.post('/api/orders', (req, res, next) => {
       })
       .catch(err => next(err));
   }
-});
-
-app.post('/api/orders', (req, res, next) => {
-  console.log('order goes here');
 });
 
 app.use('/api', (req, res, next) => {
