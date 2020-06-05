@@ -1,25 +1,41 @@
 import React from 'react';
 import classNames from 'classnames';
+import validator from 'validator';
 import CheckoutPreview from './checkout-preview';
 
 class CheckoutForm extends React.Component {
   constructor(props) {
     super(props);
     this.formDefaults = {
-      name: { value: '', isValid: true, message: '' },
-      email: { value: '', isValid: true, message: '' },
-      phone: { value: '', isValid: true, message: '' },
-      address1: { value: '', isValid: true, message: '' },
-      address2: { value: '', isValid: true, message: '' },
-      city: { value: '', isValid: true, message: '' },
-      state: { value: '', isValid: true, message: '' },
-      zip: { value: '', isValid: true, message: '' },
-      cardHolder: { value: '', isValid: true, message: '' },
-      creditCard: { value: '', isValid: true, message: '' },
-      cvv: { value: '', isValid: true, message: '' },
-      month: { value: '', isValid: true, message: '' },
-      year: { value: '', isValid: true, message: '' },
-      terms: false
+      name: { value: '', message: '' },
+      email: { value: '', message: '' },
+      phone: { value: '', message: '' },
+      address1: { value: '', message: '' },
+      address2: { value: '', message: '' },
+      city: { value: '', message: '' },
+      state: { value: '', message: '' },
+      zip: { value: '', message: '' },
+      cardHolder: { value: '', message: '' },
+      creditCard: { value: '', message: '' },
+      cvv: { value: '', message: '' },
+      month: { value: '', message: '' },
+      year: { value: '', message: '' },
+      terms: false,
+      isValid: {
+        name: true,
+        email: true,
+        phone: true,
+        address1: true,
+        address2: true,
+        city: true,
+        state: true,
+        zip: true,
+        cardHolder: true,
+        creditCard: true,
+        cvv: true,
+        month: true,
+        year: true
+      }
     };
     this.state = { ...this.formDefaults };
     this.handleChange = this.handleChange.bind(this);
@@ -62,17 +78,124 @@ class CheckoutForm extends React.Component {
       terms
     } = this.state;
 
-    const order = {
+    if (this.formIsValid()) {
+      const order = {
+        name,
+        email,
+        phone,
+        cardHolder,
+        creditCard,
+        cvv
+      };
+    } else console.log('uh oh');
+
+    //   this.props.placeOrder(order);
+
+    // }
+    // this.resetForm();
+  }
+
+  formIsValid() {
+    const {
       name,
       email,
       phone,
+      address1,
+      city,
+      state,
+      zip,
       cardHolder,
       creditCard,
-      cvv
+      cvv,
+      month,
+      year,
+      isValid
+    } = this.state;
+    let isGood = true;
+
+    if (!name.value.includes(' ') || name.value.length === 0) {
+      isValid.name = false;
+      name.message = 'Please enter full name';
+      isGood = false;
+    }
+    if (!validator.isEmail(email.value)) {
+      isValid.email = false;
+      email.message = 'Please enter a valid email address';
+      isGood = false;
+    }
+    if (!validator.isNumeric(phone.value)) {
+      isValid.phone = false;
+      phone.message = 'Please enter a valid phone number';
+      isGood = false;
+    }
+    if (!address1.value.match(/^\d +\s[A - z] +\s[A - z] +/g)) {
+      isValid.address1 = false;
+      address1.message = 'Please enter a valid address (must start with a #)';
+      isGood = false;
+    }
+    if (!validator.isAlpha(city.value.trim())) {
+      isValid.city = false;
+      city.message = 'Please enter a valid city name';
+      isGood = false;
+    }
+    if (!validator.isAlpha(state.value) || state.value.length !== 2) {
+      isValid.state = false;
+      state.message = 'Please select a state';
+      isGood = false;
+    }
+    if (!validator.isInt(zip.value)) {
+      isValid.zip = false;
+      zip.message = 'Please enter a valid zip code';
+      isGood = false;
+    }
+    if (!validator.contains(cardHolder.value.trim(), ' ')) {
+      isValid.cardHolder = false;
+      cardHolder.message = 'Please enter a valid name (as seen on credit card)';
+      isGood = false;
+    }
+    if (!validator.isCreditCard(creditCard.value)) {
+      isValid.creditCard = false;
+      creditCard.message = 'Please enter a valid credit card number';
+      isGood = false;
+    }
+    if (!validator.isInt(cvv.value) || cvv.value.length !== 3) {
+      isValid.cvv = false;
+      cvv.message = 'Please enter a valid CVV code (3 numbers)';
+      isGood = false;
+    }
+    if (!validator.isInt(month.value) || month.value.length !== 2) {
+      isValid.month = false;
+      month.message = 'Please select a month';
+      isGood = false;
+    }
+    if (!validator.isInt(year.value) || year.value.length !== 4) {
+      isValid.year = false;
+      year.message = 'Please select a year';
+      isGood = false;
+    }
+
+    const newState = {
+      name,
+      email,
+      phone,
+      address1,
+      city,
+      state,
+      zip,
+      cardHolder,
+      creditCard,
+      cvv,
+      month,
+      year,
+      isValid
     };
 
-    this.props.placeOrder(order);
-    this.resetForm();
+    if (!isGood) {
+      this.setState(newState);
+    }
+
+    return isGood;
+
   }
 
   resetForm() {
@@ -102,22 +225,24 @@ class CheckoutForm extends React.Component {
       creditCard,
       cvv,
       month,
-      year
+      year,
+      terms,
+      isValid
     } = this.state;
 
-    const nameControlClass = classNames('form-control', { 'is-invalid': !name.isValid });
-    const emailControlClass = classNames('form-control', { 'is-invalid': !email.isValid });
-    const phoneControlClass = classNames('form-control', { 'is-invalid': !phone.isValid });
-    const address1ControlClass = classNames('form-control', { 'is-invalid': !address1.isValid });
-    const address2ControlClass = classNames('form-control', { 'is-invalid': !address2.isValid });
-    const cityControlClass = classNames('form-control', { 'is-invalid': !city.isValid });
-    const stateControlClass = classNames('form-control', { 'is-invalid': !state.isValid });
-    const zipControlClass = classNames('form-control', { 'is-invalid': !zip.isValid });
-    const cardHolderControlClass = classNames('form-control', { 'is-invalid': !cardHolder.isValid });
-    const creditCardControlClass = classNames('form-control', { 'is-invalid': !creditCard.isValid });
-    const cvvControlClass = classNames('form-control', { 'is-invalid': !cvv.isValid });
-    const monthControlClass = classNames('form-control', { 'is-invalid': !month.isValid });
-    const yearControlClass = classNames('form-control', { 'is-invalid': !year.isValid });
+    const nameControlClass = classNames('form-control', { 'is-invalid': !isValid.name });
+    const emailControlClass = classNames('form-control', { 'is-invalid': !isValid.email });
+    const phoneControlClass = classNames('form-control', { 'is-invalid': !isValid.phone });
+    const address1ControlClass = classNames('form-control', { 'is-invalid': !isValid.address1 });
+    const address2ControlClass = classNames('form-control', { 'is-invalid': !isValid.address2 });
+    const cityControlClass = classNames('form-control', { 'is-invalid': !isValid.city });
+    const stateControlClass = classNames('form-control', { 'is-invalid': !isValid.state });
+    const zipControlClass = classNames('form-control', { 'is-invalid': !isValid.zip });
+    const cardHolderControlClass = classNames('form-control', { 'is-invalid': !isValid.cardHolder });
+    const creditCardControlClass = classNames('form-control', { 'is-invalid': !isValid.creditCard });
+    const cvvControlClass = classNames('form-control', { 'is-invalid': !isValid.cvv });
+    const monthControlClass = classNames('form-control', { 'is-invalid': !isValid.month });
+    const yearControlClass = classNames('form-control', { 'is-invalid': !isValid.year });
 
     return (
       <>
@@ -138,7 +263,6 @@ class CheckoutForm extends React.Component {
                     className={nameControlClass}
                     placeholder="First Last"
                     value={name.value}
-                    required
                     autoFocus
                     onChange={this.handleChange}
                   />
@@ -148,11 +272,10 @@ class CheckoutForm extends React.Component {
                   <div className="form-group col-6">
                     <label htmlFor="email">Email:</label>
                     <input
-                      type="email"
+                      type="text"
                       id="email"
                       name="email"
                       className={emailControlClass}
-                      required
                       placeholder="name@email.com"
                       value={email.value}
                       onChange={this.handleChange}
@@ -166,7 +289,6 @@ class CheckoutForm extends React.Component {
                       id="phone"
                       name="phone"
                       className={phoneControlClass}
-                      required
                       placeholder="555-555-5555"
                       value={phone.value}
                       onChange={this.handleChange}
@@ -181,7 +303,6 @@ class CheckoutForm extends React.Component {
                     id="address1"
                     name="address1"
                     className={address1ControlClass}
-                    required
                     placeholder="123 Street Name St."
                     value={address1.value}
                     onChange={this.handleChange}
@@ -195,7 +316,6 @@ class CheckoutForm extends React.Component {
                     id="address2"
                     name="address2"
                     className={address2ControlClass}
-                    required
                     placeholder="Apt/Suite #, PO Box"
                     value={address2.value}
                     onChange={this.handleChange}
@@ -210,7 +330,6 @@ class CheckoutForm extends React.Component {
                       id="city"
                       name="city"
                       className={cityControlClass}
-                      required
                       value={city.value}
                       onChange={this.handleChange}
                     />
@@ -286,7 +405,6 @@ class CheckoutForm extends React.Component {
                       id="zip"
                       name="zip"
                       className={zipControlClass}
-                      required
                       value={zip.value}
                       onChange={this.handleChange}
                     />
@@ -303,7 +421,6 @@ class CheckoutForm extends React.Component {
                       id="cardHolder"
                       name="cardHolder"
                       className={cardHolderControlClass}
-                      required
                       value={cardHolder.value}
                       onChange={this.handleChange}
                     />
@@ -316,7 +433,6 @@ class CheckoutForm extends React.Component {
                       id="creditCard"
                       name="creditCard"
                       className={creditCardControlClass}
-                      required
                       value={creditCard.value}
                       onChange={this.handleChange}
                     />
@@ -380,7 +496,6 @@ class CheckoutForm extends React.Component {
                       id="cvv"
                       name="cvv"
                       className={cvvControlClass}
-                      required
                       value={cvv.value}
                       onChange={this.handleChange}
                     />
@@ -395,8 +510,9 @@ class CheckoutForm extends React.Component {
                       name="terms"
                       type="checkbox"
                       id="terms"
-                      onChange={this.handleChange}
                       required
+                      value={terms}
+                      onChange={this.handleChange}
                     />
                     <label className="form-check-label" htmlFor="terms">
                         I acknowledge that this website is for demonstration purposes only. I will not submit
