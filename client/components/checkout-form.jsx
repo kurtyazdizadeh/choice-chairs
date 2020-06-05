@@ -7,35 +7,20 @@ class CheckoutForm extends React.Component {
   constructor(props) {
     super(props);
     this.formDefaults = {
-      name: { value: '', message: '' },
-      email: { value: '', message: '' },
-      phone: { value: '', message: '' },
-      address1: { value: '', message: '' },
-      address2: { value: '', message: '' },
-      city: { value: '', message: '' },
-      state: { value: '', message: '' },
-      zip: { value: '', message: '' },
-      cardHolder: { value: '', message: '' },
-      creditCard: { value: '', message: '' },
-      cvv: { value: '', message: '' },
-      month: { value: '', message: '' },
-      year: { value: '', message: '' },
-      terms: false,
-      isValid: {
-        name: true,
-        email: true,
-        phone: true,
-        address1: true,
-        address2: true,
-        city: true,
-        state: true,
-        zip: true,
-        cardHolder: true,
-        creditCard: true,
-        cvv: true,
-        month: true,
-        year: true
-      }
+      name: { value: '', message: '', isValid: true },
+      email: { value: '', message: '', isValid: true },
+      phone: { value: '', message: '', isValid: true },
+      address1: { value: '', message: '', isValid: true },
+      address2: { value: '', message: '', isValid: true },
+      city: { value: '', message: '', isValid: true },
+      state: { value: '', message: '', isValid: true },
+      zip: { value: '', message: '', isValid: true },
+      cardHolder: { value: '', message: '', isValid: true },
+      creditCard: { value: '', message: '', isValid: true },
+      cvv: { value: '', message: '', isValid: true },
+      month: { value: '', message: '', isValid: true },
+      year: { value: '', message: '', isValid: true },
+      terms: false
     };
     this.state = { ...this.formDefaults };
     this.handleChange = this.handleChange.bind(this);
@@ -61,6 +46,10 @@ class CheckoutForm extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    this.resetValidation();
+  }
+
+  processForm() {
     const {
       name,
       email,
@@ -74,24 +63,23 @@ class CheckoutForm extends React.Component {
       creditCard,
       cvv,
       month,
-      year,
-      terms
+      year
     } = this.state;
 
     if (this.formIsValid()) {
       const order = {
-        name,
+        fullName: name,
         email,
         phone,
         cardHolder,
         creditCard,
-        cvv
+        expirationDate: `${month}/${year}`,
+        cvv,
+        shippingAddress: `${address1}${address2 ? ` ${address2}` : ''}\n${city}, ${state} ${zip}`
       };
-    } else console.log('uh oh');
+      this.props.placeOrder(order);
+    }
 
-    //   this.props.placeOrder(order);
-
-    // }
     // this.resetForm();
   }
 
@@ -108,68 +96,67 @@ class CheckoutForm extends React.Component {
       creditCard,
       cvv,
       month,
-      year,
-      isValid
+      year
     } = this.state;
     let isGood = true;
 
     if (!name.value.includes(' ') || name.value.length === 0) {
-      isValid.name = false;
+      name.isValid = false;
       name.message = 'Please enter full name';
       isGood = false;
     }
     if (!validator.isEmail(email.value)) {
-      isValid.email = false;
+      email.isValid = false;
       email.message = 'Please enter a valid email address';
       isGood = false;
     }
     if (!validator.isNumeric(phone.value)) {
-      isValid.phone = false;
+      phone.isValid = false;
       phone.message = 'Please enter a valid phone number';
       isGood = false;
     }
     if (!address1.value.match(/^\d +\s[A - z] +\s[A - z] +/g)) {
-      isValid.address1 = false;
+      address1.isValid = false;
       address1.message = 'Please enter a valid address (must start with a #)';
       isGood = false;
     }
     if (!validator.isAlpha(city.value.trim())) {
-      isValid.city = false;
+      city.isValid = false;
       city.message = 'Please enter a valid city name';
       isGood = false;
     }
     if (!validator.isAlpha(state.value) || state.value.length !== 2) {
-      isValid.state = false;
+      state.isValid = false;
       state.message = 'Please select a state';
       isGood = false;
     }
     if (!validator.isInt(zip.value)) {
-      isValid.zip = false;
+      zip.isValid = false;
       zip.message = 'Please enter a valid zip code';
       isGood = false;
     }
     if (!validator.contains(cardHolder.value.trim(), ' ')) {
-      isValid.cardHolder = false;
+      cardHolder.isValid = false;
       cardHolder.message = 'Please enter a valid name (as seen on credit card)';
       isGood = false;
     }
     if (!validator.isCreditCard(creditCard.value)) {
-      isValid.creditCard = false;
+      creditCard.isValid = false;
       creditCard.message = 'Please enter a valid credit card number';
       isGood = false;
     }
     if (!validator.isInt(cvv.value) || cvv.value.length !== 3) {
-      isValid.cvv = false;
+      cvv.isValid = false;
       cvv.message = 'Please enter a valid CVV code (3 numbers)';
       isGood = false;
     }
     if (!validator.isInt(month.value) || month.value.length !== 2) {
-      isValid.month = false;
+      month.isValid = false;
       month.message = 'Please select a month';
       isGood = false;
     }
     if (!validator.isInt(year.value) || year.value.length !== 4) {
-      isValid.year = false;
+      year.isValid = false;
       year.message = 'Please select a year';
       isGood = false;
     }
@@ -186,8 +173,7 @@ class CheckoutForm extends React.Component {
       creditCard,
       cvv,
       month,
-      year,
-      isValid
+      year
     };
 
     if (!isGood) {
@@ -198,17 +184,20 @@ class CheckoutForm extends React.Component {
 
   }
 
-  resetForm() {
-    this.setState({
-      name: '',
-      email: '',
-      phone: '',
-      shippingAddress: '',
-      cardHolder: '',
-      creditCard: '',
-      cvv: 0,
-      expirationDate: ''
+  resetValidation() {
+    const state = JSON.parse(JSON.stringify(this.state));
+
+    Object.keys(state).map(key => {
+      if (state[key].isValid !== undefined) {
+        state[key].isValid = true;
+        state[key].message = '';
+      }
     });
+    this.setState(state, this.processForm);
+  }
+
+  resetForm() {
+    this.setState(...this.formDefaults);
   }
 
   render() {
@@ -226,23 +215,22 @@ class CheckoutForm extends React.Component {
       cvv,
       month,
       year,
-      terms,
-      isValid
+      terms
     } = this.state;
 
-    const nameControlClass = classNames('form-control', { 'is-invalid': !isValid.name });
-    const emailControlClass = classNames('form-control', { 'is-invalid': !isValid.email });
-    const phoneControlClass = classNames('form-control', { 'is-invalid': !isValid.phone });
-    const address1ControlClass = classNames('form-control', { 'is-invalid': !isValid.address1 });
-    const address2ControlClass = classNames('form-control', { 'is-invalid': !isValid.address2 });
-    const cityControlClass = classNames('form-control', { 'is-invalid': !isValid.city });
-    const stateControlClass = classNames('form-control', { 'is-invalid': !isValid.state });
-    const zipControlClass = classNames('form-control', { 'is-invalid': !isValid.zip });
-    const cardHolderControlClass = classNames('form-control', { 'is-invalid': !isValid.cardHolder });
-    const creditCardControlClass = classNames('form-control', { 'is-invalid': !isValid.creditCard });
-    const cvvControlClass = classNames('form-control', { 'is-invalid': !isValid.cvv });
-    const monthControlClass = classNames('form-control', { 'is-invalid': !isValid.month });
-    const yearControlClass = classNames('form-control', { 'is-invalid': !isValid.year });
+    const nameControlClass = classNames('form-control', { 'is-invalid': !name.isValid });
+    const emailControlClass = classNames('form-control', { 'is-invalid': !email.isValid });
+    const phoneControlClass = classNames('form-control', { 'is-invalid': !phone.isValid });
+    const address1ControlClass = classNames('form-control', { 'is-invalid': !address1.isValid });
+    const address2ControlClass = classNames('form-control', { 'is-invalid': !address2.isValid });
+    const cityControlClass = classNames('form-control', { 'is-invalid': !city.isValid });
+    const stateControlClass = classNames('form-control', { 'is-invalid': !state.isValid });
+    const zipControlClass = classNames('form-control', { 'is-invalid': !zip.isValid });
+    const cardHolderControlClass = classNames('form-control', { 'is-invalid': !cardHolder.isValid });
+    const creditCardControlClass = classNames('form-control', { 'is-invalid': !creditCard.isValid });
+    const cvvControlClass = classNames('form-control', { 'is-invalid': !cvv.isValid });
+    const monthControlClass = classNames('form-control', { 'is-invalid': !month.isValid });
+    const yearControlClass = classNames('form-control', { 'is-invalid': !year.isValid });
 
     return (
       <>
