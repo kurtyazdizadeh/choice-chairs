@@ -23,7 +23,6 @@ nav {
 }
 
 .background {
-  /* background: url('./images/background.jpg'); */
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 94vh;
@@ -36,7 +35,7 @@ nav {
   top: 6%;
 }
 .hero-image {
-  background: url('./images/hero1.jpg');
+  background: url('./images/hero.jpg');
   background-size:cover;
   background-position-y: 63%;
   background-repeat: no-repeat;
