@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import validator from 'validator';
 import CheckoutPreview from './checkout-preview';
+import OrderConfirmedModal from './order-confirmed-modal.jsx';
 
 class CheckoutForm extends React.Component {
   constructor(props) {
@@ -20,7 +21,8 @@ class CheckoutForm extends React.Component {
       cvv: { value: '', message: '', isValid: true },
       month: { value: '', message: '', isValid: true },
       year: { value: '', message: '', isValid: true },
-      terms: false
+      terms: false,
+      showOrderConfirmedModal: false
     };
     this.state = { ...this.formDefaults };
     this.handleChange = this.handleChange.bind(this);
@@ -78,8 +80,8 @@ class CheckoutForm extends React.Component {
         shippingAddress: `${address1.value}${address2.value ? ` ${address2.value}` : ''}\n${city.value}, ${state.value} ${zip.value}`
       };
       this.props.placeOrder(order);
-      // this.props.history.push('/confirmed');
       this.resetForm();
+      this.setState({ showOrderConfirmedModal: true });
     }
 
   }
@@ -216,7 +218,8 @@ class CheckoutForm extends React.Component {
       cvv,
       month,
       year,
-      terms
+      terms,
+      showOrderConfirmedModal
     } = this.state;
 
     const nameControlClass = classNames('form-control', { 'is-invalid': !name.isValid });
@@ -235,6 +238,14 @@ class CheckoutForm extends React.Component {
 
     return (
       <>
+        {showOrderConfirmedModal
+          ? <OrderConfirmedModal
+            cart={this.props.cart}
+            orderTotal={this.props.orderTotal}
+            clearCart={this.props.clearCart}
+          />
+          : <></>
+        }
         <div className="container m-3 p-2">
           <div className="row">
             <div className="h-100 p-3 col-12 col-md-7 bg-light rounded">

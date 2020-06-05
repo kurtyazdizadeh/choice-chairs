@@ -5,7 +5,7 @@ import ProductList from './product-list';
 import ProductDetails from './product-details';
 import CartSummary from './cart-summary';
 import CheckoutForm from './checkout-form';
-import IntroModal from './modal';
+import IntroModal from './intro-modal';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -21,6 +21,7 @@ export default class App extends React.Component {
     this.deleteAllFromCart = this.deleteAllFromCart.bind(this);
     this.placeOrder = this.placeOrder.bind(this);
     this.modalClicked = this.modalClicked.bind(this);
+    this.clearCart = this.clearCart.bind(this);
   }
 
   componentDidMount() {
@@ -82,10 +83,13 @@ export default class App extends React.Component {
     fetch('/api/orders', fetchConfig)
       .then(res => res.json())
       .then(processedOrder => {
-        this.setState({ cart: [] });
       })
       .catch(err => console.error(err));
 
+  }
+
+  clearCart() {
+    this.setState({ cart: [] });
   }
 
   render() {
@@ -128,6 +132,7 @@ export default class App extends React.Component {
                         orderTotal={orderTotal}
                         cart={cart}
                         placeOrder={this.placeOrder}
+                        clearCart={this.clearCart}
                       />}
                   />
                   <Route path="/"
