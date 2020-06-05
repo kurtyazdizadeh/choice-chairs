@@ -24,7 +24,7 @@ class CartSummary extends React.Component {
   render() {
     const { orderTotal } = this.props;
     return (
-      <div className="container m-2 p-2 bg-light h-100">
+      <div className="container m-2 p-2 bg-light h-100 rounded">
         <h4
           className="text-secondary pointer"
           onClick={() => {

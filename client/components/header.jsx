@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 class Header extends React.Component {
   render() {
     return (
-      <nav className="navbar navbar-dark bg-dark text-white fixed-top">
+      <nav className="navbar text-white fixed-top">
         <h3
           className="pointer"
           onClick={() => {

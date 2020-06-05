@@ -254,6 +254,10 @@ app.post('/api/orders', (req, res, next) => {
   }
 });
 
+app.post('/api/orders', (req, res, next) => {
+  console.log('order goes here');
+});
+
 app.use('/api', (req, res, next) => {
   next(new ClientError(`cannot ${req.method} ${req.originalUrl}`, 404));
 });
