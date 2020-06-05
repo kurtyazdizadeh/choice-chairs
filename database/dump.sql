@@ -210,8 +210,13 @@ ALTER SEQUENCE public.images_imageid_seq OWNED BY public.images."imageId";
 CREATE TABLE public.orders (
     "orderId" integer NOT NULL,
     "cartId" integer NOT NULL,
-    name text NOT NULL,
+    "fullName" text NOT NULL,
+    email text NOT NULL,
+    phone text NOT NULL,
+    "cardHolder" text NOT NULL,
     "creditCard" text NOT NULL,
+    "expirationDate" text NOT NULL,
+    cvv integer NOT NULL,
     "shippingAddress" text NOT NULL,
     "createdAt" timestamp(6) with time zone DEFAULT now() NOT NULL
 );
@@ -338,19 +343,6 @@ ALTER TABLE ONLY public.products ALTER COLUMN "productId" SET DEFAULT nextval('p
 --
 
 COPY public.cartitems ("cartItemId", "cartId", "productId", price, color) FROM stdin;
-328	6	2	27499	blue
-5	4	7	24999	camo
-6	4	5	29999	red
-7	4	1	19999	green
-8	4	1	19999	green
-9	4	1	19999	black
-10	4	2	27499	blue
-11	5	2	27499	blue
-12	5	2	27499	red
-13	5	2	27499	red
-14	5	4	19999	orange
-321	6	2	27499	blue
-322	6	2	27499	blue
 \.
 
 
@@ -359,11 +351,6 @@ COPY public.cartitems ("cartItemId", "cartId", "productId", price, color) FROM s
 --
 
 COPY public.carts ("cartId", "createdAt") FROM stdin;
-2	2020-06-01 18:05:37.643137+00
-3	2020-06-01 18:12:11.722259+00
-4	2020-06-01 18:13:44.707414+00
-5	2020-06-01 21:59:32.664989+00
-6	2020-06-02 17:25:05.787507+00
 \.
 
 
@@ -401,7 +388,7 @@ COPY public.images ("imageId", "imageType") FROM stdin;
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.orders ("orderId", "cartId", name, "creditCard", "shippingAddress", "createdAt") FROM stdin;
+COPY public.orders ("orderId", "cartId", "fullName", email, phone, "cardHolder", "creditCard", "expirationDate", cvv, "shippingAddress", "createdAt") FROM stdin;
 \.
 
 
@@ -410,15 +397,15 @@ COPY public.orders ("orderId", "cartId", name, "creditCard", "shippingAddress", 
 --
 
 COPY public.products ("productId", name, price, "shortDescription", "longDescription", "chosenColor") FROM stdin;
+3	The Tuxedo	24999	Flashy, bold, revolutionary. Unlike your actual suit, this chair will make a statement and give you room to breathe at the same time.	This chair will put you above the rest and give you maximum comfort and productivity. Features a reclining back mechanism, tilt & tension mechanism control, ajustable headrest and lumbar support cushions, swivel armrests.	white
+6	The Throne	29999	The crown jewel. Sharp edges, fine lines, and a royal design that will elevate you to new heights.	Adjustable headrest and lumbar support pillows provide comfort that lasts. Raise or lower your chair, tweaking the height and depth of your armrests, and reclining between 90-130 degrees. Full 360 degrees swivel rotation enable dynamic movement. Upholstered in bonded leather in bold, contrasting colors but maintains a professional look.	grey
+2	The Streamer	27499	Designed for optimum performance, The Streamer is prepped for gaming marathons that will maximize your K/D ratio.	We see you, gamer, we know your needs are different than the average person. This chair is built with you in mind, comfort features includes a high back, flip up armrests, support pillows for lumbar and neck support, and a premium leather upholstry. Sit back and game in style!	red
+9	The Commander	27499	Break the mold with different color tones that will stand out. Unique, fresh, and innovative choices make this the best seat in the house.	Unparalleled design, a padded headrest to keep you gaming for hours. The five-star pedestal base with lockable wheels, adjustable armrests with four dimensions of movement, and the widened seat promotes blood flow and decreases fatigue. Get in the game, and take Command!	white
 4	The Plush	19999	Premium and luxurious, The Plush will make all your friends jealous.	The Plush is an eye catching spectacle of a chair. The ulimate gaming chair is made with a synthetic flex upholstry and features a height adjustable memory foam seat, reclining back mechanism up to 150 degrees, and ergonomic adjustable headrest and lumbar support pillows.	orange
 5	The Racer	29999	Leave your rivals in the dust with The Racer. Premium leather, designer flair and a two-tone finish that belongs on the track.	Stain-resistant 2.0 PU leather can be cleaned repeatedly without surface damage by simply a cleaning cloth. Designed with a Thick Cure Foam seat that is 2 times heavier than regular foam that maintains its shape. Features a full-tilt locking mechanism that lets you customize your seat to your comfort.	red
-3	The Tuxedo	24999	Flashy, bold, revolutionary. Unlike your actual suit, this chair will make a statement and give you room to breathe at the same time.	This chair will put you above the rest and give you maximum comfort and productivity. Features a reclining back mechanism, tilt & tension mechanism control, ajustable headrest and lumbar support cushions, swivel armrests.	white
-1	The Standard	19999	The defining style of comfort and practicality, a fine choice for one seeking a subtle charm.	Upholstered in Softhead Leather contrasting colored mesh for an aggressive style and cool feel. Features height adjustment, seat back recline control, flip up arms and 360 degrees of swivel.	black
-9	The Commander	27499	Break the mold with different color tones that will stand out. Unique, fresh, and innovative choices make this the best seat in the house.	Unparalleled design, a padded headrest to keep you gaming for hours. The five-star pedestal base with lockable wheels, adjustable armrests with four dimensions of movement, and the widened seat promotes blood flow and decreases fatigue. Get in the game, and take Command!	white
-6	The Throne	29999	The crown jewel. Sharp edges, fine lines, and a royal design that will elevate you to new heights.	Adjustable headrest and lumbar support pillows provide comfort that lasts. Raise or lower your chair, tweaking the height and depth of your armrests, and reclining between 90-130 degrees. Full 360 degrees swivel rotation enable dynamic movement. Upholstered in bonded leather in bold, contrasting colors but maintains a professional look.	blue
-2	The Streamer	27499	Designed for optimum performance, The Streamer is prepped for gaming marathons that will maximize your K/D ratio.	We see you, gamer, we know your needs are different than the average person. This chair is built with you in mind, comfort features includes a high back, flip up armrests, support pillows for lumbar and neck support, and a premium leather upholstry. Sit back and game in style!	blue
+1	The Standard	19999	The defining style of comfort and practicality, a fine choice for one seeking a subtle charm.	Upholstered in Softhead Leather contrasting colored mesh for an aggressive style and cool feel. Features height adjustment, seat back recline control, flip up arms and 360 degrees of swivel.	green
 7	The Soldier	24999	Built to be tough. You will do anything but blend into the crowd as you earn your prestige.	The earthy tones of the camouflage brings the outdoors, indoors. Built with an ergonomic shape that curves with and protects the natural shape of the back, this chair will keep you supported even with extended use.	camo
-8	The Executive	34999	Refined, classy, premium. Designed by CEOs, for CEOs.	The chair sits on a trumpet pedestal base that provides sturdy support, swivels 360 degrees to make movement easy, and features a tilt tension adjustment that controls how easily the chair rocks back. The Executive choice!	black
+8	The Executive	34999	Refined, classy, premium. Designed by CEOs, for CEOs.	The chair sits on a trumpet pedestal base that provides sturdy support, swivels 360 degrees to make movement easy, and features a tilt tension adjustment that controls how easily the chair rocks back. The Executive choice!	grey
 \.
 
 
@@ -492,14 +479,14 @@ COPY public.products_images ("productId", "imageId") FROM stdin;
 -- Name: cartitems_cartItemId_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."cartitems_cartItemId_seq"', 328, true);
+SELECT pg_catalog.setval('public."cartitems_cartItemId_seq"', 388, true);
 
 
 --
 -- Name: carts_cartId_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."carts_cartId_seq"', 6, true);
+SELECT pg_catalog.setval('public."carts_cartId_seq"', 29, true);
 
 
 --
@@ -520,7 +507,7 @@ SELECT pg_catalog.setval('public.images_imageid_seq', 5, true);
 -- Name: orders_orderId_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."orders_orderId_seq"', 1, false);
+SELECT pg_catalog.setval('public."orders_orderId_seq"', 10, true);
 
 
 --

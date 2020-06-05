@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import validator from 'validator';
 import CheckoutPreview from './checkout-preview';
+import OrderConfirmedModal from './order-confirmed-modal.jsx';
 
 class CheckoutForm extends React.Component {
   constructor(props) {
@@ -20,7 +21,8 @@ class CheckoutForm extends React.Component {
       cvv: { value: '', message: '', isValid: true },
       month: { value: '', message: '', isValid: true },
       year: { value: '', message: '', isValid: true },
-      terms: false
+      terms: false,
+      showOrderConfirmedModal: false
     };
     this.state = { ...this.formDefaults };
     this.handleChange = this.handleChange.bind(this);
@@ -68,19 +70,20 @@ class CheckoutForm extends React.Component {
 
     if (this.formIsValid()) {
       const order = {
-        fullName: name,
-        email,
-        phone,
-        cardHolder,
-        creditCard,
-        expirationDate: `${month}/${year}`,
-        cvv,
-        shippingAddress: `${address1}${address2 ? ` ${address2}` : ''}\n${city}, ${state} ${zip}`
+        fullName: name.value,
+        email: email.value,
+        phone: phone.value,
+        cardHolder: cardHolder.value,
+        creditCard: creditCard.value,
+        expirationDate: `${month.value}/${year.value}`,
+        cvv: cvv.value,
+        shippingAddress: `${address1.value}${address2.value ? ` ${address2.value}` : ''}\n${city.value}, ${state.value} ${zip.value}`
       };
       this.props.placeOrder(order);
+      this.resetForm();
+      this.setState({ showOrderConfirmedModal: true });
     }
 
-    // this.resetForm();
   }
 
   formIsValid() {
@@ -110,17 +113,17 @@ class CheckoutForm extends React.Component {
       email.message = 'Please enter a valid email address';
       isGood = false;
     }
-    if (!validator.isNumeric(phone.value)) {
+    if (!phone.value.match(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
       phone.isValid = false;
       phone.message = 'Please enter a valid phone number';
       isGood = false;
     }
-    if (!address1.value.match(/^\d +\s[A - z] +\s[A - z] +/g)) {
+    if (address1.value.trim().length < 3) {
       address1.isValid = false;
-      address1.message = 'Please enter a valid address (must start with a #)';
+      address1.message = 'Please enter a valid address';
       isGood = false;
     }
-    if (!validator.isAlpha(city.value.trim())) {
+    if (city.value.trim().length < 3) {
       city.isValid = false;
       city.message = 'Please enter a valid city name';
       isGood = false;
@@ -140,7 +143,7 @@ class CheckoutForm extends React.Component {
       cardHolder.message = 'Please enter a valid name (as seen on credit card)';
       isGood = false;
     }
-    if (!validator.isCreditCard(creditCard.value)) {
+    if (!validator.isInt(creditCard.value) || creditCard.value.length !== 16) {
       creditCard.isValid = false;
       creditCard.message = 'Please enter a valid credit card number';
       isGood = false;
@@ -197,7 +200,7 @@ class CheckoutForm extends React.Component {
   }
 
   resetForm() {
-    this.setState(...this.formDefaults);
+    this.setState(this.formDefaults);
   }
 
   render() {
@@ -215,7 +218,8 @@ class CheckoutForm extends React.Component {
       cvv,
       month,
       year,
-      terms
+      terms,
+      showOrderConfirmedModal
     } = this.state;
 
     const nameControlClass = classNames('form-control', { 'is-invalid': !name.isValid });
@@ -234,6 +238,14 @@ class CheckoutForm extends React.Component {
 
     return (
       <>
+        {showOrderConfirmedModal
+          ? <OrderConfirmedModal
+            cart={this.props.cart}
+            orderTotal={this.props.orderTotal}
+            clearCart={this.props.clearCart}
+          />
+          : <></>
+        }
         <div className="container m-3 p-2">
           <div className="row">
             <div className="h-100 p-3 col-12 col-md-7 bg-light rounded">

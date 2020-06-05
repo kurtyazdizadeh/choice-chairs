@@ -5,7 +5,7 @@ import ProductList from './product-list';
 import ProductDetails from './product-details';
 import CartSummary from './cart-summary';
 import CheckoutForm from './checkout-form';
-import IntroModal from './modal';
+import IntroModal from './intro-modal';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -21,25 +21,15 @@ export default class App extends React.Component {
     this.deleteAllFromCart = this.deleteAllFromCart.bind(this);
     this.placeOrder = this.placeOrder.bind(this);
     this.modalClicked = this.modalClicked.bind(this);
+    this.clearCart = this.clearCart.bind(this);
   }
 
   componentDidMount() {
-    // fetch('/api/health-check')
-    //   .then(res => res.json())
-    //   .then(data => this.setState({ message: data.message || data.error }))
-    //   .catch(err => this.setState({ message: err.message }))
-    //   .finally(() => this.setState({ isLoading: false }));
-
     this.getCartItems();
   }
 
-  modalClicked(modalType) {
-    if (modalType === 'intro') {
-      this.setState({ modalClicked: true });
-    }
-    if (modalType === 'checkout') {
-      this.setState({ checkoutModalClicked: true });
-    }
+  modalClicked() {
+    this.setState({ modalClicked: true });
   }
 
   addToCart(product) {
@@ -93,16 +83,13 @@ export default class App extends React.Component {
     fetch('/api/orders', fetchConfig)
       .then(res => res.json())
       .then(processedOrder => {
-        this.setState({
-          // view: {
-          //   name: 'catalog',
-          //   params: {}
-          // },
-          cart: []
-        });
       })
       .catch(err => console.error(err));
 
+  }
+
+  clearCart() {
+    this.setState({ cart: [] });
   }
 
   render() {
@@ -118,7 +105,7 @@ export default class App extends React.Component {
       <>
         <Router>
           <Header cartItemCount={numOfCartItems} />
-          {/* <IntroModal modalClicked={this.modalClicked} /> */}
+          <IntroModal modalClicked={this.modalClicked} />
           <main>
             <div className="products container-fluid">
               <div className="background row justify-content-center">
@@ -145,6 +132,7 @@ export default class App extends React.Component {
                         orderTotal={orderTotal}
                         cart={cart}
                         placeOrder={this.placeOrder}
+                        clearCart={this.clearCart}
                       />}
                   />
                   <Route path="/"
