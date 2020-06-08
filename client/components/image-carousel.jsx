@@ -17,7 +17,7 @@ class Gallery extends React.Component {
               <img
                 src={`../images/${productId}/${color}-${image}.webp`}
                 alt={`${image} view`}
-                className=""
+                className="pointer"
               />
             </div>
           );
