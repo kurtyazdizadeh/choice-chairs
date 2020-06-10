@@ -25,14 +25,14 @@ nav {
 .background {
   background-size: cover;
   background-repeat: no-repeat;
-  min-height: 94vh;
+  min-height: 95vh;
   height: 100%;
   background-color: steelblue;
 }
 
 .products {
   position: absolute;
-  top: 5.9%;
+  top: 5%;
 }
 .hero-image {
   background: url('./images/hero.jpg');
@@ -80,6 +80,12 @@ nav {
   margin: 2px;
   border: 1px solid lightgrey;
   display: inline-block;
+  transition: all 1s ease;
+
+}
+.color:hover {
+  border: 2px solid #ffee93;
+
 }
 .black {
  background-color: black;
@@ -147,4 +153,41 @@ ul {
     font-size: 1.5rem;
   }
 
+}
+
+/* iPhone 6/7/8 */
+@media only screen
+and (min-device-width : 375px)
+and (max-device-width : 737px) {
+  .products {
+    top: 7%;
+  }
+}
+@media only screen
+and (min-device-width : 375px)
+and (max-device-width : 737px)
+and (orientation : landscape) {
+  .products {
+    top: 12.25%;
+  }
+}
+
+/*iPhone X */
+@media only screen
+and (min-device-width : 375px)
+and (max-device-width : 812px)
+and (-webkit-device-pixel-ratio : 3) {
+  .products {
+    top: 6%;
+  }
+}
+
+@media only screen
+and (min-device-width : 375px)
+and (max-device-width : 812px)
+and (-webkit-device-pixel-ratio : 3)
+and (orientation : landscape) {
+  .products {
+    top: 15%;
+  }
 }
