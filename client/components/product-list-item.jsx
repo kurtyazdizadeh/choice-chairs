@@ -6,7 +6,7 @@ class ProductListItem extends React.Component {
     const { name, price, desc, images, colorOptions, productId } = this.props;
     return (
       <div
-        className="card product-item m-2 col-10 col-md-5 col-lg-3"
+        className="card product-item m-2 mt-3 col-10 col-md-5 col-lg-3"
       >
         <div className="card-image pointer"
           onClick={() => {
